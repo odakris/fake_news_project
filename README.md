@@ -1,2 +1,1 @@
-"# fake_news_project" 
-"# fake_news_project" 
+<img width="1394" height="1062" alt="image" src="https://github.com/user-attachments/assets/5f7b7c3f-dca8-44a1-8c64-759cd3bb6404" />
