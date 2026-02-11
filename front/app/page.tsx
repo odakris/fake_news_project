@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/bluesky/page-header"
 import { PostCard } from "@/components/bluesky/post-card"
+import { SignInButton } from "@/components/bluesky/sign-in-button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { feedPosts } from "@/lib/mock-data"
 
@@ -12,6 +13,8 @@ export default function HomePage() {
 
   return (
     <div>
+
+      <SignInButton />
 
       <PageHeader title="Home" sticky={false} />
 

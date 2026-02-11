@@ -1,20 +1,31 @@
-model User {
-  id               String    @id
-  name             String
-  email            String
-  emailVerified    Boolean   @default(false)
-  image            String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @default(now()) @updatedAt
-  stripeCustomerId String?   @unique
-  sessions         Session[]
-  accounts         Account[]
 
-  ephemeralKeySecret    String?
-  ephemeralKeyExpiresAt DateTime?
-  paymentIntentId       String?
+generator client {
+  provider = "prisma-client"
+  output   = "./../../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String           @id
+  name            String
+  email           String
+  emailVerified   Boolean          @default(false)
+  image           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  atprotoDid      String?
+  atprotoHandle   String?
+  atprotoBio      String?
+  atprotoBanner   String?
+  sessions        Session[]
+  accounts        Account[]
+  atprotosessions AtprotoSession[]
 
   @@unique([email])
+  @@unique([atprotoDid])
   @@map("user")
 }
 
@@ -30,6 +41,7 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
+  @@index([userId])
   @@map("session")
 }
 
@@ -49,6 +61,7 @@ model Account {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
+  @@index([userId])
   @@map("account")
 }
 
@@ -58,7 +71,30 @@ model Verification {
   value      String
   expiresAt  DateTime
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+  updatedAt  DateTime @updatedAt
 
+  @@index([identifier])
   @@map("verification")
+}
+
+model AtprotoState {
+  id        String   @id
+  key       String
+  state     String
+  expiresAt DateTime
+
+  @@unique([key])
+  @@map("atprotoState")
+}
+
+model AtprotoSession {
+  id        String   @id
+  did       String
+  session   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt DateTime
+
+  @@unique([did])
+  @@map("atprotoSession")
 }

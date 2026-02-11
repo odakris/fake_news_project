@@ -6,6 +6,6 @@ import { env } from "./lib/env";
 export default {
   schema: path.join("prisma"),
   datasource: {
-    url: env.DATABASE_URL,
+    url: env.DATABASE_URL_UNPOOLED,
   }
 } satisfies PrismaConfig;

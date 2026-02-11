@@ -11,9 +11,12 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string().min(1),
     BETTER_AUTH_URL: z.string().min(1),
     DATABASE_URL: z.url(),
+    DATABASE_URL_UNPOOLED: z.url(),
 
     AUTH_BLUESKY_ID: z.string().optional(),
     AUTH_BLUESKY_SECRET: z.string().optional(),
+
+    ATPROTO_PRIVATE_KEY: z.string().min(1),
 
     NODE_ENV: z.enum(["development", "production", "test"]),
   },
