@@ -6,6 +6,8 @@ import "./globals.css"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AppShell } from "@/components/bluesky/app-shell"
+import { RightPanel } from "@/components/bluesky/right-panel"
+import { Sidebar } from "@/components/bluesky/sidebar"
 
 const _inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
@@ -27,13 +29,17 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="light">
+    <html lang="en" className="light" suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground">
         <TooltipProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <AppShell>
-              {children}
-            </AppShell>
+            <div className="mx-auto flex justify-center max-w-7xl">
+              <Sidebar className="w-[200px]" />
+              <main className="w-[600px] border-x border-border">
+                {children}
+              </main>
+              <RightPanel className="w-[300px]" />
+            </div>
           </ThemeProvider>
         </TooltipProvider>
       </body>

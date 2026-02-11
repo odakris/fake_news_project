@@ -23,6 +23,7 @@ import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { PageHeader } from "./page-header"
 import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
 
 const settingsSections = [
   { id: "profile", label: "Edit Profile", icon: User },
@@ -341,7 +342,7 @@ function NotificationsSection() {
 }
 
 function AppearanceSection() {
-  const [theme, setTheme] = useState<"light" | "dark" | "system">("system")
+  const { theme, setTheme, themes } = useTheme();
 
   return (
     <div className="p-6 max-w-lg">
@@ -354,7 +355,7 @@ function AppearanceSection() {
         <div>
           <Label className="text-sm font-medium mb-3 block">Theme</Label>
           <div className="flex gap-3">
-            {(["light", "dark", "system"] as const).map((t) => (
+            {themes.map((t) => (
               <button
                 key={t}
                 type="button"

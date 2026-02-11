@@ -2,6 +2,7 @@ import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { cn, PropsWithClassName } from "@/lib/utils"
 
 const trendingTopics = [
   { tag: "ATProtocol", posts: "2.4k posts" },
@@ -29,9 +30,9 @@ const suggestedUsers = [
   },
 ]
 
-export function RightPanel() {
+export function RightPanel({ className }: PropsWithClassName) {
   return (
-    <aside className="hidden xl:block w-[320px] shrink-0 sticky top-0 h-screen overflow-y-auto">
+    <aside className={cn("hidden xl:block shrink-0 sticky top-0 h-screen overflow-y-auto", className)}>
       <div className="p-4 flex flex-col gap-5">
         {/* Search */}
         <div className="relative">

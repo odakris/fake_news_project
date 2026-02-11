@@ -12,7 +12,7 @@ import {
   Feather,
   CloudSun,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, PropsWithClassName } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
@@ -25,11 +25,11 @@ const navItems = [
   { href: "/account", label: "Settings", icon: Settings },
 ]
 
-export function Sidebar() {
+export function Sidebar({ className }: PropsWithClassName) {
   const pathname = usePathname()
 
   return (
-    <aside className="hidden md:flex md:w-[72px] lg:w-[240px] shrink-0 sticky top-0 h-screen">
+    <aside className={cn("hidden md:flex shrink-0 sticky top-0 h-screen", className)}>
       <nav className="flex flex-col items-center lg:items-stretch gap-1 py-4 px-2 lg:px-4 w-full h-full">
         {/* Logo */}
         <Link
