@@ -1,39 +1,26 @@
-"use client"
+import type { PropsWithChildren } from "react";
+import { GoBackButton } from "./go-back-button";
+import { cn } from "@/lib/utils";
 
-import type { ReactNode } from "react"
-import { ArrowLeft } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-
-interface PageHeaderProps {
+type PageHeaderProps = PropsWithChildren<{
   title: string
   subtitle?: string
   showBack?: boolean
-  children?: ReactNode
-}
+  sticky?: boolean
+}>;
 
 export function PageHeader({
   title,
   subtitle,
   showBack = false,
   children,
+  sticky = true,
 }: PageHeaderProps) {
-  const router = useRouter()
 
   return (
-    <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border">
+    <header className={cn("top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border", sticky && "sticky")}>
       <div className="flex items-center gap-3 px-4 h-14">
-        {showBack && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 rounded-full"
-            onClick={() => router.back()}
-            aria-label="Go back"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        )}
+        {showBack && <GoBackButton />}
         <div className="flex-1 min-w-0">
           <h1 className="text-lg font-bold text-foreground truncate">
             {title}

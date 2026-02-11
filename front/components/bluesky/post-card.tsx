@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
-export interface PostData {
+export type PostData = {
   id: string
   author: {
     name: string
@@ -37,7 +37,7 @@ export interface PostData {
   isReposted?: boolean
 }
 
-interface PostCardProps {
+type PostCardProps = {
   post: PostData
 }
 
@@ -58,7 +58,7 @@ export function PostCard({ post }: PostCardProps) {
   }
 
   return (
-    <article className="flex gap-3 px-4 py-4 border-b border-border hover:bg-accent/30 transition-colors">
+    <article className="flex gap-3 px-4 py-2 border-b border-border hover:bg-accent/30 transition-colors">
       <Link href="/profile" className="shrink-0">
         <Avatar className="h-10 w-10">
           <AvatarImage src={post.author.avatar || "/placeholder.svg"} alt={`${post.author.name}'s avatar`} />
@@ -124,7 +124,7 @@ export function PostCard({ post }: PostCardProps) {
           <button
             type="button"
             onClick={() => {}}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-muted-foreground hover:text-bluesky hover:bg-bluesky/10 transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-muted-foreground hover:text-blue-400  transition-colors"
             aria-label={`${post.replies} replies`}
           >
             <MessageCircle className="h-[18px] w-[18px]" />
@@ -137,8 +137,8 @@ export function PostCard({ post }: PostCardProps) {
             className={cn(
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-colors",
               isReposted
-                ? "text-emerald-600 hover:bg-emerald-50"
-                : "text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50"
+                ? "text-emerald-600"
+                : "text-muted-foreground hover:text-emerald-600"
             )}
             aria-label={`${reposts} reposts`}
             aria-pressed={isReposted}
@@ -153,8 +153,8 @@ export function PostCard({ post }: PostCardProps) {
             className={cn(
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-colors",
               isLiked
-                ? "text-rose-500 hover:bg-rose-50"
-                : "text-muted-foreground hover:text-rose-500 hover:bg-rose-50"
+                ? "text-rose-500 "
+                : "text-muted-foreground hover:text-rose-500 "
             )}
             aria-label={`${likes} likes`}
             aria-pressed={isLiked}
@@ -169,7 +169,7 @@ export function PostCard({ post }: PostCardProps) {
           <button
             type="button"
             onClick={() => {}}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-muted-foreground hover:text-bluesky hover:bg-bluesky/10 transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-muted-foreground hover:text-gray-300 transition-colors"
             aria-label="Share post"
           >
             <Share className="h-[18px] w-[18px]" />
