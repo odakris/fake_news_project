@@ -1,0 +1,55 @@
+services:
+
+  fakenewsproject-db:
+    image: postgres:13
+
+    environment:
+      POSTGRES_DB: fakenewsproject
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+    ports:
+      - "5432:5432"
+
+    networks:
+      - fakenewsproject-web
+
+    volumes:
+      - fakenewsproject-db:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD", "pg_isready", "--username", "user", "-dbname=fakenewsproject"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  fakenewsproject-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - fakenewsproject-web
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://user:password@fakenewsproject-db:5432/fakenewsproject
+      - BETTER_AUTH_SECRET=secret
+      - BETTER_AUTH_URL=http://fakenewsproject-web:3000
+      - NODE_ENV=production
+      - PORT=3000
+    depends_on:
+      - fakenewsproject-db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  fakenewsproject-web:
+    driver: bridge
+
+volumes:
+  fakenewsproject-db:

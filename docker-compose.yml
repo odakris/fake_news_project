@@ -1,0 +1,31 @@
+services:
+
+  fakenewsproject-db:
+    image: postgres:13
+
+    environment:
+      POSTGRES_DB: fakenewsproject
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+    ports:
+      - "5432:5432"
+
+    networks:
+      - fakenewsproject-web
+
+    volumes:
+      - fakenewsproject-db:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD", "pg_isready", "--username", "user", "-dbname=fakenewsproject"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  fakenewsproject-web:
+    driver: bridge
+
+volumes:
+  fakenewsproject-db:

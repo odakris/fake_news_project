@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, Text
 from sqlalchemy.sql import func
-from app.db.base_class import Base
+from db.base_class import Base
 
 class AnalysisLog(Base):
     # Clé primaire technique

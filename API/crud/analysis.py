@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from app.models.analysis_log import AnalysisLog
-from app.schemas.analysis import AnalysisResponse # On réutilise le schéma ou un spécifique
+from models.analysis_log import AnalysisLog
+from schemas.analysis import AnalysisResponse # On réutilise le schéma ou un spécifique
 
 # --- LECTURE (READ) ---
 def get_analysis_by_uri(db: Session, post_uri: str):
