@@ -1,0 +1,8 @@
+node_modules
+.dockerignore
+.git
+.gitignore
+.next
+.env-template
+*.md
+src/generated
