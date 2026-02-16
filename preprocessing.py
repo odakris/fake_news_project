@@ -19,7 +19,7 @@ def clean_text(text):
 def lemmatize(doc, row_num): 
     """Lemmatizes the input text and removes stop words, punctuation, and extra whitespace."""
 
-    print(f"Batch {row_num} lemmatization...")
+    print(f"Lemmatization of row {row_num}...")
     tokens = [
         token.lemma_.lower() 
         for token in doc 
@@ -37,15 +37,17 @@ def preprocess(df):
     df = df.copy()
     
     print("Cleaning text...")
+    df = df[df["text"].str.strip().astype(bool)]  # Drop rows where text is empty or whitespace-only
     df["cleaned_text"] = df["text"].apply(clean_text)
-    
+    df = df[df["cleaned_text"].str.strip().astype(bool)].reset_index(drop=True)  # Drop rows where cleaned text is empty
+
     print("Lemmatizing text...")
     processed_texts = []
     try:
-        for i, doc in enumerate(nlp.pipe(df["text"], batch_size=1000)):
+        #for i, doc in enumerate(nlp.pipe(df["cleaned_text"], batch_size=1000)):
+        for i, doc in enumerate(nlp.pipe(df["cleaned_text"])):
             lemmatized_text = lemmatize(doc, i)
             processed_texts.append(lemmatized_text)
-            print("Preparation for next batch...")
             # df["text"] = df.apply(lambda row: lemmatize(next(doc), row.name), axis=1)
     except Exception as e:
         print(f"Error during preprocessing: {e}")
