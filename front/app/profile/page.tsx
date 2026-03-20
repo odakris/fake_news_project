@@ -4,6 +4,10 @@ import { TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { profilePosts } from "@/lib/mock-data"
 import { ProfileHeader } from "./_components/profile-header"
 import { Tabs } from "@/components/ui/tabs"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { logger } from "@/lib/logger"
+import { User } from "@/lib/generated/prisma/client"
 
 const profileTabs = [
   { id: "posts", label: "Posts" },
@@ -12,16 +16,25 @@ const profileTabs = [
   { id: "likes", label: "Likes" },
 ] as const
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+
+  const user = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!user?.user) {
+    return <div>User not found</div>;
+  }
+
   return (
     <div>
       <PageHeader
-        title="Alice Sky"
+        title={user?.user?.name ?? "Unknown"}
         subtitle="562 posts"
         showBack
       />
 
-      <ProfileHeader isOwnProfile />
+      <ProfileHeader isOwnProfile user={user?.user as User} />
 
       <Tabs defaultValue="posts">
         <TabsList variant={"line"} className="size-full border-b border-border">

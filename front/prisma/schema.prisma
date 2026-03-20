@@ -22,7 +22,7 @@ model User {
   atprotoBanner   String?
   sessions        Session[]
   accounts        Account[]
-  atprotosessions AtprotoSession[]
+  // atprotosessions AtprotoSession[]
 
   @@unique([email])
   @@unique([atprotoDid])
@@ -91,8 +91,8 @@ model AtprotoSession {
   id        String   @id
   did       String
   session   String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?
+  // user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   updatedAt DateTime
 
   @@unique([did])

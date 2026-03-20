@@ -196,7 +196,7 @@ export function atprotoAuth(options: AtprotoAuthOptions): BetterAuthPlugin {
               data: {
                 did,
                 session: JSON.stringify(session),
-                userId: "", // Will be updated by callback
+                userId: null, // Will be updated by callback
                 updatedAt: new Date(),
               },
             });
@@ -368,7 +368,7 @@ export function atprotoAuth(options: AtprotoAuthOptions): BetterAuthPlugin {
 
               const newUser = await ctx.context.internalAdapter.createUser({
                 name: profile.displayName ?? profile.handle,
-                email: `${profile.did}@atproto.invalid`, // Placeholder email
+                email: `${profile.handle}@atproto.invalid`, // Placeholder email
                 image: profile.avatar,
                 emailVerified: false,
                 atprotoDid: profile.did,

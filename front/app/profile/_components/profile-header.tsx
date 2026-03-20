@@ -12,12 +12,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { useSession } from "@/lib/auth-client"
+import { User } from "@/lib/generated/prisma/client"
 
 interface ProfileHeaderProps {
   isOwnProfile?: boolean
+  user: User
 }
 
-export function ProfileHeader({ isOwnProfile = true }: ProfileHeaderProps) {
+export function ProfileHeader({ isOwnProfile = true, user }: ProfileHeaderProps) {
   const [isFollowing, setIsFollowing] = useState(false)
 
   return (
@@ -33,11 +36,11 @@ export function ProfileHeader({ isOwnProfile = true }: ProfileHeaderProps) {
         <div className="flex items-end justify-between -mt-12 sm:-mt-16 mb-3">
           <Avatar className="h-20 w-20 sm:h-28 sm:w-28 border-4 border-card bg-card">
             <AvatarImage
-              src="/placeholder.svg?height=112&width=112"
-              alt="Alice Sky's avatar"
+              src={user.image ?? "/placeholder.svg?height=112&width=112"}
+              alt={user.name ?? "Unknown"}
             />
             <AvatarFallback className="bg-bluesky/10 text-bluesky text-2xl sm:text-3xl font-bold">
-              AS
+              {user.name?.charAt(0).toUpperCase() ?? "U"}
             </AvatarFallback>
           </Avatar>
 
@@ -94,14 +97,13 @@ export function ProfileHeader({ isOwnProfile = true }: ProfileHeaderProps) {
 
         {/* Name and handle */}
         <div className="mb-3">
-          <h1 className="text-xl font-bold text-foreground">Alice Sky</h1>
-          <p className="text-sm text-muted-foreground">@alice.bsky.social</p>
+          <h1 className="text-xl font-bold text-foreground">{user.name ?? "Unknown"}</h1>
+          <p className="text-sm text-muted-foreground">{user.atprotoHandle ?? "Unknown"}</p>
         </div>
 
         {/* Bio */}
         <p className="text-[15px] leading-relaxed text-foreground mb-3">
-          Building the open social web. Developer advocate and AT Protocol
-          enthusiast. Open source contributor. Opinions are my own.
+          {user.atprotoBio ?? "Unknown"}
         </p>
 
         {/* Meta info */}
