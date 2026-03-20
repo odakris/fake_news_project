@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from "react";
+import type { ComponentProps, PropsWithChildren } from "react";
 import { GoBackButton } from "./go-back-button";
 import { cn } from "@/lib/utils";
 
@@ -6,19 +6,18 @@ type PageHeaderProps = PropsWithChildren<{
   title: string
   subtitle?: string
   showBack?: boolean
-  sticky?: boolean
-}>;
+}> & ComponentProps<"header">;
 
 export function PageHeader({
   title,
   subtitle,
   showBack = false,
   children,
-  sticky = true,
+  ...props
 }: PageHeaderProps) {
 
   return (
-    <header className={cn("top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border", sticky && "sticky")}>
+    <header className={cn("top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border", props.className)} {...props}>
       <div className="flex items-center gap-3 px-4 h-14">
         {showBack && <GoBackButton />}
         <div className="flex-1 min-w-0">

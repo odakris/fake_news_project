@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { cn, PropsWithClassName } from "@/lib/utils"
+import { TypographyBoldText, TypographySemiBoldText, TypographyTinyText } from "@/components/bluesky/typography"
 
 const trendingTopics = [
   { tag: "ATProtocol", posts: "2.4k posts" },
@@ -45,9 +46,9 @@ export function RightPanel({ className }: PropsWithClassName) {
 
         {/* Trending */}
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
-          <h2 className="text-base font-bold px-4 pt-4 pb-2 text-foreground">
+          <TypographyBoldText className="px-4 pt-4 pb-2">
             Trending
-          </h2>
+          </TypographyBoldText>
           <div className="flex flex-col">
             {trendingTopics.map((topic) => (
               <button
@@ -55,12 +56,12 @@ export function RightPanel({ className }: PropsWithClassName) {
                 type="button"
                 className="flex flex-col px-4 py-3 hover:bg-accent/50 transition-colors text-left"
               >
-                <span className="text-sm font-semibold text-foreground">
+                <TypographySemiBoldText>
                   #{topic.tag}
-                </span>
-                <span className="text-xs text-muted-foreground">
+                </TypographySemiBoldText>
+                <TypographyTinyText>
                   {topic.posts}
-                </span>
+                </TypographyTinyText>
               </button>
             ))}
           </div>
@@ -68,9 +69,9 @@ export function RightPanel({ className }: PropsWithClassName) {
 
         {/* Suggested follows */}
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
-          <h2 className="text-base font-bold px-4 pt-4 pb-2 text-foreground">
+          <TypographyBoldText className="px-4 pt-4 pb-2">
             Who to follow
-          </h2>
+          </TypographyBoldText>
           <div className="flex flex-col">
             {suggestedUsers.map((user) => (
               <div
@@ -87,12 +88,12 @@ export function RightPanel({ className }: PropsWithClassName) {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground truncate">
+                  <TypographySemiBoldText className="truncate">
                     {user.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
+                  </TypographySemiBoldText>
+                  <TypographyTinyText className="truncate">
                     {user.handle}
-                  </p>
+                  </TypographyTinyText>
                 </div>
                 <Button
                   size="sm"
@@ -106,11 +107,11 @@ export function RightPanel({ className }: PropsWithClassName) {
         </div>
 
         {/* Footer links */}
-        <div className="px-4 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-          <span>Terms</span>
-          <span>Privacy</span>
-          <span>Safety</span>
-          <span>Accessibility</span>
+        <div className="px-4 flex flex-wrap gap-x-3 gap-y-1">
+          <TypographyTinyText>Terms</TypographyTinyText>
+          <TypographyTinyText>Privacy</TypographyTinyText>
+          <TypographyTinyText>Safety</TypographyTinyText>
+          <TypographyTinyText>Accessibility</TypographyTinyText>
         </div>
       </div>
     </aside>

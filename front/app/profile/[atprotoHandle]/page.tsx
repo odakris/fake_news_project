@@ -2,9 +2,11 @@ import { PageHeader } from "@/components/bluesky/page-header"
 import { PostCard } from "@/components/bluesky/post-card"
 import { TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { profilePosts } from "@/lib/mock-data"
-import { ProfileHeader } from "./_components/profile-header"
+import { ProfileHeader } from "./../_components/profile-header"
 import { Tabs } from "@/components/ui/tabs"
-import { requireUserSession } from "@/lib/users"
+import { getUserByAtprotoHandle } from "@/lib/users"
+import { notFound } from "next/navigation"
+import { logger } from "@/lib/logger"
 
 const profileTabs = [
   { id: "posts", label: "Posts" },
@@ -13,9 +15,14 @@ const profileTabs = [
   { id: "likes", label: "Likes" },
 ] as const
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ params }: PageProps<"/profile/[atprotoHandle]">) {
 
-  const user = await requireUserSession();
+  const { atprotoHandle } = await params;
+
+  const user = await getUserByAtprotoHandle(atprotoHandle);
+  if (!user) {
+    return notFound();
+  }
 
   return (
     <div>

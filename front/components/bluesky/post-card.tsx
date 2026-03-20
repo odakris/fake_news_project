@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { TypographyRegularText, TypographySemiBoldText, TypographyTinyText } from "./typography"
 
 export type PostData = {
   id: string
@@ -71,16 +72,16 @@ export function PostCard({ post }: PostCardProps) {
         {/* Header */}
         <div className="flex items-center gap-2 mb-0.5">
           <Link href="/profile" className="flex items-center gap-1.5 min-w-0">
-            <span className="text-sm font-semibold text-foreground truncate hover:underline">
+            <TypographySemiBoldText className="truncate hover:underline">
               {post.author.name}
-            </span>
-            <span className="text-sm text-muted-foreground truncate">
+            </TypographySemiBoldText>
+            <TypographyTinyText className="truncate">
               {post.author.handle}
-            </span>
+            </TypographyTinyText>
           </Link>
-          <span className="text-sm text-muted-foreground shrink-0">
+          <TypographyTinyText className="shrink-0">
             &middot; {post.timestamp}
-          </span>
+          </TypographyTinyText>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -104,9 +105,9 @@ export function PostCard({ post }: PostCardProps) {
         </div>
 
         {/* Content */}
-        <p className="text-[15px] leading-relaxed text-foreground whitespace-pre-wrap wrap-break-word">
+        <TypographyRegularText className="leading-relaxed whitespace-pre-wrap wrap-break-word">
           {post.content}
-        </p>
+        </TypographyRegularText>
 
         {/* Optional image */}
         {post.image && (

@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils"
 import { useSession } from "@/lib/auth-client"
 import { User } from "@/lib/generated/prisma/client"
+import { TypographyRegularText, TypographyTinyText } from "@/components/bluesky/typography"
 
 interface ProfileHeaderProps {
   isOwnProfile?: boolean
@@ -98,13 +99,13 @@ export function ProfileHeader({ isOwnProfile = true, user }: ProfileHeaderProps)
         {/* Name and handle */}
         <div className="mb-3">
           <h1 className="text-xl font-bold text-foreground">{user.name ?? "Unknown"}</h1>
-          <p className="text-sm text-muted-foreground">{user.atprotoHandle ?? "Unknown"}</p>
+          <TypographyTinyText>{user.atprotoHandle ?? "Unknown"}</TypographyTinyText>
         </div>
 
         {/* Bio */}
-        <p className="text-[15px] leading-relaxed text-foreground mb-3">
+        <TypographyRegularText className="mb-3">
           {user.atprotoBio ?? "Unknown"}
-        </p>
+        </TypographyRegularText>
 
         {/* Meta info */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mb-4">
@@ -112,15 +113,15 @@ export function ProfileHeader({ isOwnProfile = true, user }: ProfileHeaderProps)
             <MapPin className="h-3.5 w-3.5" />
             San Francisco, CA
           </span>
-          <a
-            href="https://alice.dev"
+          <Link
+            href={`https://${user.atprotoHandle}`}
             className="flex items-center gap-1.5 text-bluesky hover:underline"
             target="_blank"
             rel="noopener noreferrer"
           >
             <LinkIcon className="h-3.5 w-3.5" />
             alice.dev
-          </a>
+          </Link>
           <span className="flex items-center gap-1.5">
             <CalendarDays className="h-3.5 w-3.5" />
             Joined March 2023
