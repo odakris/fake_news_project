@@ -1,6 +1,12 @@
-import { createJwksHandler } from "atproto-better-auth";
-import { env } from "@/lib/env";
+import { createJwks } from "atproto-better-auth";
+import { privateKey } from "@/lib/auth";
 
-const privateKey = JSON.parse(env.ATPROTO_PRIVATE_KEY);
+export async function GET() {
+  const jwks = createJwks(privateKey);
 
-export const GET = createJwksHandler(privateKey);
+  return Response.json(jwks, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}

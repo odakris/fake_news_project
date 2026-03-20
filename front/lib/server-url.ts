@@ -23,5 +23,5 @@ export const getServerUrl = () => {
     }
   
     // If we are in development, we return the localhost URL
-    return "http://10.103.112.186:8081";
+    return "http://localhost:3000";
   };

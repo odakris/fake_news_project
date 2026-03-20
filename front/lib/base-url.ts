@@ -1,15 +1,22 @@
 /**
- * Extend this function when going to production by
- * setting the baseUrl to your production API URL.
+ * Returns the base URL of the API.
+ *
+ * - In the browser, we always use the current origin (window.location.origin)
+ *   so that calls from a tunneled domain (e.g. ngrok) hit the same origin
+ *   instead of trying to reach localhost, which is blocked as loopback.
+ * - On the server (SSR / Node), we can fall back to an env var or localhost.
  */
 export const getBaseUrl = () => {
-  /**
-   * Gets the IP address of your host-machine. If it cannot automatically find it,
-   * you'll have to manually set it. NOTE: Port 3000 should work for most but confirm
-   * you don't have anything else running on it, or you'd have to change it.
-   *
-   * **NOTE**: This is only for development. In production, you'll want to set the
-   * baseUrl to your production API URL.
-    */
-    return `http://10.103.112.186:8081`;
+  // Browser: use the page origin (works for localhost and ngrok)
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+
+  // Server-side: allow override via env in case you proxy or deploy elsewhere
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return process.env.NEXT_PUBLIC_BASE_URL;
+  }
+
+  // Default dev fallback
+  return "http://localhost:3000";
 };
