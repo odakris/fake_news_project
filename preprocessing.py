@@ -1,3 +1,7 @@
+# ============================================================
+#  preprocessing.py — NLP text cleaning and lemmatization
+# ============================================================
+
 import spacy
 import re
 import time
@@ -25,7 +29,7 @@ def clean_text(text):
     # Remove source signatures at the start: "WASHINGTON (Reuters) -"
     text = re.sub(r'^[A-Z\s/,]+ \([A-Za-z\s]+\)\s*[-–—]\s*', '', text)
     # Remove photo attributions
-    text = re.sub(r'(?i)(photo|image|featured image|featured sketch)\s*(by|via|courtesy of)\s*.{0,80}', '', text)
+    text = re.sub(r'(?i)(photo|image|featured? image|featured? sketch)\s*(by|via|courtesy of)\s*.{0,80}', '', text)
     # Remove call-to-action patterns
     text = re.sub(r'(?i)(read more|watch .{0,20}video|click here|subscribe|share this|sign up).*', '', text)
     # Remove URLs
@@ -56,6 +60,7 @@ def lemmatize(doc, row_num=0, total=1, verbose=True):
             and token.pos_ not in ["PROPN", "NUM", "SYM", "X"]
             and len(token.lemma_) > 2
             and token.lemma_.lower() not in SKIP_TOKENS
+            and token.text.lower() not in SKIP_TOKENS
     ]
 
     return " ".join(tokens)
@@ -116,4 +121,3 @@ def preprocess(df):
     print("=" * 60 + "\n")
     
     return df
-
