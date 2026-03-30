@@ -7,7 +7,8 @@
 #  - SVM (C=0.5) → F1 = 0.8991
 #  - Naive Bayes (alpha=0.01) → F1 = 0.8723
 # ============================================================
-
+import joblib
+import os
 from sklearn.linear_model import LogisticRegression
 
 from config import RANDOM_STATE
@@ -23,6 +24,7 @@ TFIDF_PARAMS = {
     "min_df": 1,
     "ngram_range": (1, 2),
     "sublinear_tf": True,
+    "stop_words": ["the"],
 }
 BEST_C = 10.0
 
@@ -36,15 +38,12 @@ if __name__ == "__main__":
     # Train final model
     print("\n>> Training final model (Logistic Regression, C={})".format(BEST_C))
     X_train, X_test, y_train, y_test, vectorizer = split_and_vectorize(df, TFIDF_PARAMS)
+
     model = train_and_evaluate(
         LogisticRegression(C=BEST_C, random_state=RANDOM_STATE),
         X_train, X_test, y_train, y_test
     )
     print_top_words(model, vectorizer)
-
-    feature_names = vectorizer.get_feature_names_out()
-    the_features = [f for f in feature_names if "the" in f.split()]
-    print(the_features[:20])
 
     # Test predictions
     print("\n>> Testing predictions")
@@ -63,3 +62,8 @@ if __name__ == "__main__":
     test_fake = "You won't believe what this racist politician just revealed about his secret scheme. Watch the video and share this story before they try to hide the truth from liberal America."
     label, proba = predict_text(model, vectorizer, test_fake)
     print(f"  Fake style:  label={label}  proba={proba}")
+
+    os.makedirs("./models", exist_ok=True)
+    joblib.dump(model, "./models/logistic_regression.pkl")
+    joblib.dump(vectorizer, "./models/tfidf_vectorizer.pkl")
+    print("\n>> Model and vectorizer saved to ./models/")
