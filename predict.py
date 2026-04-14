@@ -2,10 +2,14 @@
 #  predict.py — Prediction on new texts
 # ============================================================
 
+import nltk
+from sklearn import pipeline
+
 from preprocessing import clean_text, nlp, lemmatize
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 
-def predict_text(model, vectorizer, text):
+def predict_text(model: object, vectorizer: object, text: str):
     """Make a prediction on a given text.
     
     Applies the same preprocessing pipeline as training:
@@ -24,9 +28,43 @@ def predict_text(model, vectorizer, text):
     label = model.predict(tfidf)[0]
 
     # predict_proba is not available for all models (e.g. LinearSVC)
-    # In that case, return None for proba
     proba = None
     if hasattr(model, "predict_proba"):
         proba = model.predict_proba(tfidf)[0]
 
     return label, proba
+
+
+def predict_texts_distilbert(classifier: pipeline, text: str):
+    """Predict using DistilBERT model (from Hugging Face).
+    No preprocessing needed — the tokenizer handles everything.
+    
+    Args:
+        classifier: Hugging Face pipeline object
+        text: raw text string
+    
+    Returns:
+        label (str): "Fake" or "Real"
+        proba (float): confidence score
+    """
+
+    result = classifier(text)
+    label = result[0]['label']  # "Fake" or "Real"
+    proba = result[0]['score']  # confidence score for the predicted label
+
+    return label, proba
+
+
+def analyze_sentiment(sia: SentimentIntensityAnalyzer, text: str):
+    """Analyze sentiment using VADER (from NLTK).
+    
+    Args:
+        sia: SentimentIntensityAnalyzer object
+        text: raw text string
+    
+    Returns:
+        scores (dict): dictionary with 'neg', 'neu', 'pos', and 'compound' scores
+    """
+
+    scores = sia.polarity_scores(text)
+    return scores
