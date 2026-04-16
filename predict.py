@@ -2,14 +2,11 @@
 #  predict.py — Prediction on new texts
 # ============================================================
 
-import nltk
-from sklearn import pipeline
-
 from preprocessing import clean_text, nlp, lemmatize
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from transformers import pipeline
 
-
-def predict_text(model: object, vectorizer: object, text: str):
+def predict_text_baseline(model: object, vectorizer: object, text: str):
     """Make a prediction on a given text.
     
     Applies the same preprocessing pipeline as training:
@@ -68,3 +65,17 @@ def analyze_sentiment(sia: SentimentIntensityAnalyzer, text: str):
 
     scores = sia.polarity_scores(text)
     return scores
+
+
+def analyze_emotion(emotion_classifier, text):
+    """Analyze emotions using DistilRoBERTa (j-hartmann).
+    
+    Args:
+        emotion_classifier: Hugging Face pipeline object
+        text: raw text string
+    
+    Returns:
+        list: scores for each emotion (anger, disgust, fear, joy, neutral, sadness, surprise)
+    """
+    return emotion_classifier(text)[0]
+            
