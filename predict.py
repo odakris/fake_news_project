@@ -77,5 +77,33 @@ def analyze_emotion(emotion_classifier, text):
     Returns:
         list: scores for each emotion (anger, disgust, fear, joy, neutral, sadness, surprise)
     """
-    return emotion_classifier(text)[0]
-            
+    return emotion_classifier(text, truncation=True, max_length=512)[0]
+
+
+def compute_credibility_score(distilbert_label, distilbert_score, emotions):
+    """Calcule un score de crédibilité entre 0 et 1.
+
+    - distilbert_label: "Fake" or "Real"
+    - distilbert_score: confiance du modèle (0 à 1)
+    - emotions: listes des émotions [{'label': 'anger', 'score': 0.45}, ...]
+    """
+
+    # Score de base : Probabilité "REAL"
+    if distilbert_label == "Real":
+        base_score = distilbert_score
+    else:
+        base_score = 1 - distilbert_score
+
+    # Récupération des scores des émotions suspectes
+    emotion_dict = {e["label"]: e["score"] for e in emotions}
+    suprise = emotion_dict.get("surprise", 0)
+    anger = emotion_dict.get("anger", 0)
+    disgust = emotion_dict.get("disgust", 0)
+
+    # Pénalité émotionnelle (moyenne)
+    penatlty = (suprise + anger + disgust) / 3
+
+    # Score final
+    credibility_score = base_score * (1 - penatlty)
+
+    return round(credibility_score, 3)
