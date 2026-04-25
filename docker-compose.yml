@@ -1,5 +1,4 @@
 services:
-
   fakenewsproject-db:
     image: postgres:13
 
@@ -46,6 +45,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  fakenewsproject-data-science:
+    build:
+      context: ./data-science
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - fakenewsproject-web
 
 networks:
   fakenewsproject-web:
