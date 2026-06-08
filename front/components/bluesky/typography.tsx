@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/src/lib/utils"
 import { ComponentProps } from "react"
 
 export function TypographyTinyText({ children, className, ...props }: ComponentProps<"p">) {

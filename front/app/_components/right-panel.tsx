@@ -2,8 +2,10 @@ import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { cn, PropsWithClassName } from "@/lib/utils"
+import { cn, PropsWithClassName } from "@/src/lib/utils"
 import { TypographyBoldText, TypographySemiBoldText, TypographyTinyText } from "@/components/bluesky/typography"
+import { getServerAgent } from "@/src/lib/bsky-server"
+import { getWhoToFollow } from "@/src/lib/bsky/actor"
 
 const trendingTopics = [
   { tag: "ATProtocol", posts: "2.4k posts" },
@@ -13,25 +15,10 @@ const trendingTopics = [
   { tag: "TypeScript", posts: "4.2k posts" },
 ]
 
-const suggestedUsers = [
-  {
-    name: "Dan Abramov",
-    handle: "@dan.bsky.social",
-    avatar: "DA",
-  },
-  {
-    name: "Sara Chen",
-    handle: "@sara.bsky.social",
-    avatar: "SC",
-  },
-  {
-    name: "Marcus Dev",
-    handle: "@marcus.bsky.social",
-    avatar: "MD",
-  },
-]
-
-export function RightPanel({ className }: PropsWithClassName) {
+export async function RightPanel({ className }: PropsWithClassName) {
+  const agent = await getServerAgent();
+  const whoToFollow = await getWhoToFollow(agent);
+  
   return (
     <aside className={cn("hidden xl:block shrink-0 sticky top-0 h-screen overflow-y-auto", className)}>
       <div className="p-4 flex flex-col gap-5">
@@ -73,7 +60,7 @@ export function RightPanel({ className }: PropsWithClassName) {
             Who to follow
           </TypographyBoldText>
           <div className="flex flex-col">
-            {suggestedUsers.map((user) => (
+            {whoToFollow.map((user) => (
               <div
                 key={user.handle}
                 className="flex items-center gap-3 px-4 py-3 hover:bg-accent/50 transition-colors"
@@ -81,7 +68,7 @@ export function RightPanel({ className }: PropsWithClassName) {
                 <Avatar className="h-10 w-10 shrink-0">
                   <AvatarImage
                     src="/placeholder.svg?height=40&width=40"
-                    alt={`${user.name}'s avatar`}
+                    alt={`${user.displayName}'s avatar`}
                   />
                   <AvatarFallback className="bg-bluesky/10 text-bluesky text-sm font-semibold">
                     {user.avatar}
@@ -89,7 +76,7 @@ export function RightPanel({ className }: PropsWithClassName) {
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <TypographySemiBoldText className="truncate">
-                    {user.name}
+                    {user.displayName}
                   </TypographySemiBoldText>
                   <TypographyTinyText className="truncate">
                     {user.handle}

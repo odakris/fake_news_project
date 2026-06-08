@@ -1,7 +1,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "./../lib/generated/prisma"
+  output   = "../src/lib/generated/prisma"
 }
 
 datasource db {
@@ -9,31 +9,29 @@ datasource db {
 }
 
 model User {
-  id              String           @id
-  name            String
-  email           String
-  emailVerified   Boolean          @default(false)
-  image           String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  atprotoDid      String?
-  atprotoHandle   String?
-  atprotoBio      String?
-  atprotoBanner   String?
-  sessions        Session[]
-  accounts        Account[]
-  // atprotosessions AtprotoSession[]
+  id                  String    @id @default(cuid())
+  name                String
+  email               String    @unique
+  emailVerified       Boolean   @default(false)
+  image               String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  username            String?   @unique
+  displayUsername     String?
+  did                 String?   @unique
+  handle              String?   @unique
+  atprotoAccessToken  String?
+  atprotoRefreshToken String?
+  sessions            Session[]
+  accounts            Account[]
 
-  @@unique([email])
-  @@unique([atprotoDid])
-  @@unique([atprotoHandle])
   @@map("user")
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(cuid())
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
@@ -41,13 +39,12 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
-  @@index([userId])
   @@map("session")
+  @@index([userId])
 }
 
 model Account {
-  id                    String    @id
+  id                    String    @id @default(cuid())
   accountId             String
   providerId            String
   userId                String
@@ -62,40 +59,18 @@ model Account {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
-  @@index([userId])
   @@map("account")
+  @@index([userId])
 }
 
 model Verification {
-  id         String   @id
+  id         String    @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
 
-  @@index([identifier])
   @@map("verification")
-}
-
-model AtprotoState {
-  id        String   @id
-  key       String
-  state     String
-  expiresAt DateTime
-
-  @@unique([key])
-  @@map("atprotoState")
-}
-
-model AtprotoSession {
-  id        String   @id
-  did       String
-  session   String
-  userId    String?
-  // user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  updatedAt DateTime
-
-  @@unique([did])
-  @@map("atprotoSession")
+  @@index([identifier])
 }

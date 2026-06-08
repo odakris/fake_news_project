@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { PageHeader } from "./page-header"
-import { cn } from "@/lib/utils"
+import { cn } from "@/src/lib/utils"
 import { useTheme } from "next-themes"
 
 const settingsSections = [

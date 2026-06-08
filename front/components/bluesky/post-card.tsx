@@ -1,6 +1,3 @@
-"use client"
-
-import { useState } from "react"
 import Link from "next/link"
 import {
   MessageCircle,
@@ -17,54 +14,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { cn } from "@/lib/utils"
+import { cn } from "@/src/lib/utils"
 import { TypographyRegularText, TypographySemiBoldText, TypographyTinyText } from "./typography"
-
-export type PostData = {
-  id: string
-  author: {
-    name: string
-    handle: string
-    avatar: string
-    initials: string
-  }
-  content: string
-  image?: string
-  timestamp: string
-  likes: number
-  reposts: number
-  replies: number
-  isLiked?: boolean
-  isReposted?: boolean
-}
+import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs"
 
 type PostCardProps = {
-  post: PostData
+  post: FeedViewPost
 }
 
 export function PostCard({ post }: PostCardProps) {
-  const [isLiked, setIsLiked] = useState(post.isLiked ?? false)
-  const [isReposted, setIsReposted] = useState(post.isReposted ?? false)
-  const [likes, setLikes] = useState(post.likes)
-  const [reposts, setReposts] = useState(post.reposts)
-
-  const handleLike = () => {
-    setIsLiked(!isLiked)
-    setLikes((prev) => (isLiked ? prev - 1 : prev + 1))
-  }
-
-  const handleRepost = () => {
-    setIsReposted(!isReposted)
-    setReposts((prev) => (isReposted ? prev - 1 : prev + 1))
-  }
 
   return (
     <article className="flex gap-3 px-4 py-2 border-b border-border hover:bg-accent/30 transition-colors">
       <Link href="/profile" className="shrink-0">
-        <Avatar className="h-10 w-10">
-          <AvatarImage src={post.author.avatar || "/placeholder.svg"} alt={`${post.author.name}'s avatar`} />
+        <Avatar className="size-10">
+          <AvatarImage src={post.post.author.avatar || "/placeholder.svg"} alt={`${post.post.author.displayName}'s avatar`} />
           <AvatarFallback className="bg-bluesky/10 text-bluesky text-sm font-semibold">
-            {post.author.initials}
+            {post.post.author.displayName?.slice(0, 2)}
           </AvatarFallback>
         </Avatar>
       </Link>
@@ -73,14 +39,14 @@ export function PostCard({ post }: PostCardProps) {
         <div className="flex items-center gap-2 mb-0.5">
           <Link href="/profile" className="flex items-center gap-1.5 min-w-0">
             <TypographySemiBoldText className="truncate hover:underline">
-              {post.author.name}
+              {post.post.author.displayName}
             </TypographySemiBoldText>
             <TypographyTinyText className="truncate">
-              {post.author.handle}
+              {post.post.author.handle}
             </TypographyTinyText>
           </Link>
           <TypographyTinyText className="shrink-0">
-            &middot; {post.timestamp}
+            &middot; {new Date(post.post.indexedAt).toLocaleString()}
           </TypographyTinyText>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -106,11 +72,11 @@ export function PostCard({ post }: PostCardProps) {
 
         {/* Content */}
         <TypographyRegularText className="leading-relaxed whitespace-pre-wrap wrap-break-word">
-          {post.content}
+          {post.post.record.text as string}
         </TypographyRegularText>
 
         {/* Optional image */}
-        {post.image && (
+        {/* {post.image && (
           <div className="mt-3 rounded-2xl overflow-hidden border border-border">
             <img
               src={post.image || "/placeholder.svg"}
@@ -118,58 +84,54 @@ export function PostCard({ post }: PostCardProps) {
               className="w-full h-auto max-h-[400px] object-cover"
             />
           </div>
-        )}
+        )} */}
 
         {/* Actions */}
         <div className="flex items-center gap-1 mt-3 -ml-2">
           <button
             type="button"
-            onClick={() => {}}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-muted-foreground hover:text-blue-400  transition-colors"
-            aria-label={`${post.replies} replies`}
+            aria-label={`${post.post.record.replyCount} replies`}
           >
             <MessageCircle className="h-[18px] w-[18px]" />
-            <span className="text-xs font-medium">{post.replies}</span>
+            <span className="text-xs font-medium">{post.post.replyCount}</span>
           </button>
 
           <button
             type="button"
-            onClick={handleRepost}
             className={cn(
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-colors",
-              isReposted
-                ? "text-emerald-600"
-                : "text-muted-foreground hover:text-emerald-600"
+              // isReposted
+              //   ? "text-emerald-600"
+              //   : "text-muted-foreground hover:text-emerald-600"
             )}
-            aria-label={`${reposts} reposts`}
-            aria-pressed={isReposted}
+            aria-label={`${post.post.record.repostCount} reposts`}
+            // aria-pressed={isReposted}
           >
             <Repeat2 className="h-[18px] w-[18px]" />
-            <span className="text-xs font-medium">{reposts}</span>
+            <span className="text-xs font-medium">{post.post.repostCount}</span>
           </button>
 
           <button
             type="button"
-            onClick={handleLike}
             className={cn(
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-colors",
-              isLiked
-                ? "text-rose-500 "
-                : "text-muted-foreground hover:text-rose-500 "
+              // isLiked
+              //   ? "text-rose-500 "
+              //   : "text-muted-foreground hover:text-rose-500 "
             )}
-            aria-label={`${likes} likes`}
-            aria-pressed={isLiked}
+            aria-label={`${post.post.likeCount} likes`}
+            // aria-pressed={isLiked}
           >
             <Heart
               className="h-[18px] w-[18px]"
-              fill={isLiked ? "currentColor" : "none"}
+              // fill={isLiked ? "currentColor" : "none"}
             />
-            <span className="text-xs font-medium">{likes}</span>
+            <span className="text-xs font-medium">{post.post.likeCount}</span>
           </button>
 
           <button
             type="button"
-            onClick={() => {}}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-muted-foreground hover:text-gray-300 transition-colors"
             aria-label="Share post"
           >

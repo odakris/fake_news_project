@@ -4,8 +4,8 @@ import {
     SidebarMenu,
     SidebarMenuItem,
   } from "@/components/ui/sidebar";
-import { logger } from "@/lib/logger";
-import { cn, PropsWithClassName } from "@/lib/utils";
+import { logger } from "@/src/lib/logger";
+import { cn, PropsWithClassName } from "@/src/lib/utils";
   import { Home, Search, Bell, MessageCircle, User, Settings } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
