@@ -1,7 +1,7 @@
 "use client";
 
 // In your component/page
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/src/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 

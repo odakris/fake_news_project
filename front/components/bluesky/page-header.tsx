@@ -1,6 +1,6 @@
 import type { ComponentProps, PropsWithChildren } from "react";
 import { GoBackButton } from "./go-back-button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/src/lib/utils";
 
 type PageHeaderProps = PropsWithChildren<{
   title: string
