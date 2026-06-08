@@ -15,3 +15,14 @@ export async function getSuggestedFeeds(agent: Agent) {
   return suggestedFeeds;
 }
 
+export async function getUserPosts(agent: Agent, did: string, limit: number = 30) {
+  const userPosts = await agent.app.bsky.feed.getAuthorFeed({
+    actor: did,
+    filter: 'posts_no_replies',
+    limit: limit,
+  });
+  if (userPosts.success) {
+    return userPosts.data;
+  }
+  return { feed: [], cursor: null };
+}

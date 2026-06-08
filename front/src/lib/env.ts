@@ -8,7 +8,7 @@ import { z } from "zod";
  */
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.url(),
+    DATABASE_URL: z.url().default("postgresql://user:password@localhost:5432/fakenewsproject"),
     BETTER_AUTH_SECRET: z
       .string()
       .min(32)

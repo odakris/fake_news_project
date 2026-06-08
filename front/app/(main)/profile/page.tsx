@@ -1,13 +1,13 @@
 import { PageHeader } from "@/components/bluesky/page-header"
 import { PostCard } from "@/components/bluesky/post-card"
 import { TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { profilePosts } from "@/src/lib/mock-data"
 import { ProfileHeader } from "./_components/profile-header"
 import { Tabs } from "@/components/ui/tabs"
 import { getProfile } from "@/src/lib/bsky/actor"
 import { getServerAgent } from "@/src/lib/bsky-server"
 import { requireUserSession } from "@/src/lib/users"
 import { notFound } from "next/navigation"
+import { getUserPosts } from "@/src/lib/bsky/feed"
 
 const profileTabs = [
   { id: "posts", label: "Posts" },
@@ -27,6 +27,7 @@ export default async function ProfilePage() {
   if (!profile) {
     return notFound();
   }
+  const { feed: userPosts } = await getUserPosts(agent, user.did);
 
   return (
     <div>
@@ -47,8 +48,8 @@ export default async function ProfilePage() {
           ))}
         </TabsList>
         <TabsContent value="posts">
-          {profilePosts.map((post) => (
-            <PostCard key={post.id} post={post} />
+          {userPosts.map((post) => (
+            <PostCard key={post.post.cid} post={post} />
           ))}
         </TabsContent>
       </Tabs>
