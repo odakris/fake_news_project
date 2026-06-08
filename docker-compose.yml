@@ -29,6 +29,7 @@ services:
       args:
         - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
         - DATABASE_URL=${DATABASE_URL}
+        - NODE_VERSION=24-bookworm-slim
     ports:
       - "3000:3000"
     networks:
@@ -37,10 +38,13 @@ services:
       - DATABASE_URL=postgresql://user:password@fakenewsproject-db:5432/fakenewsproject
       - BETTER_AUTH_SECRET=4TuLEwVLdEPCP8A816fMRV7Kdzee97A2
       - BETTER_AUTH_URL=http://fakenewsproject-web:3000
+      - DATA_SCIENCE_API_URL=http://fakenewsproject-data-science:8000
+      - REDIS_URL=redis://fakenewsproject-redis:6379
       - NODE_ENV=production
       - PORT=3000
     depends_on:
       - fakenewsproject-db
+      - fakenewsproject-redis
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 10s
@@ -61,6 +65,14 @@ services:
     environment:
       - WATCHFILES_FORCE_POLLING=true
     command: uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+
+  # Redis
+  fakenewsproject-redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - fakenewsproject-web
 
 networks:
   fakenewsproject-web:

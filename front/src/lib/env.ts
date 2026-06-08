@@ -14,7 +14,8 @@ export const env = createEnv({
       .min(32)
       .default("dev-only-change-me-before-production-0000"),
     BETTER_AUTH_URL: z.url().default("http://localhost:3001"),
-
+    DATA_SCIENCE_API_URL: z.url().default("http://localhost:8000"),
+    REDIS_URL: z.string().default("redis://localhost:6379"),
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   },
   experimental__runtimeEnv: {
