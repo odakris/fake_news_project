@@ -10,3 +10,4 @@ nltk
 joblib
 pydantic
 scikit-learn
+pandas
