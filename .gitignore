@@ -15,3 +15,7 @@ data/
 # IDE
 .vscode/
 .idea/
+
+# Au cas ou
+node_modules/
+.env
