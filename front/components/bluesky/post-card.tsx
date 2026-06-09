@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { Suspense } from "react"
 import {
   MessageCircle,
   Repeat2,
@@ -6,6 +7,10 @@ import {
   Share,
   MoreHorizontal,
 } from "lucide-react"
+import {
+  PostClassificationBadge,
+  PostClassificationBadgeSkeleton,
+} from "@/components/bluesky/post-classification-badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,6 +22,7 @@ import {
 import { cn } from "@/src/lib/utils"
 import { TypographyRegularText, TypographySemiBoldText, TypographyTinyText } from "./typography"
 import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 type PostCardProps = {
   post: FeedViewPost
@@ -74,6 +80,10 @@ export function PostCard({ post }: PostCardProps) {
         <TypographyRegularText className="leading-relaxed whitespace-pre-wrap wrap-break-word">
           {post.post.record.text as string}
         </TypographyRegularText>
+
+        <Suspense fallback={<PostClassificationBadgeSkeleton />}>
+          <PostClassificationBadge text={post.post.record.text as string} />
+        </Suspense>
 
         {/* Optional image */}
         {/* {post.image && (

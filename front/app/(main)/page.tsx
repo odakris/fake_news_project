@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/bluesky/page-header"
 import { PostCard } from "@/components/bluesky/post-card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { getServerAgent } from "@/src/lib/bsky-server"
 import { getFeed } from "@/src/lib/bsky/feed";
 
@@ -21,9 +22,11 @@ export default async function HomePage() {
           <TabsTrigger value="popular">Popular</TabsTrigger>
         </TabsList>
         <TabsContent value="following">
-          {feedPosts.map((post) => (
-            <PostCard key={post.post.cid} post={post} />
-          ))}
+          <TooltipProvider delayDuration={0}>
+            {feedPosts.map((post) => (
+              <PostCard key={post.post.cid} post={post} />
+            ))}
+          </TooltipProvider>
         </TabsContent>
       </Tabs>
 
