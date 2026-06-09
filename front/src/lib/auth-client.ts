@@ -3,8 +3,8 @@ import {
   inferAdditionalFields,
   usernameClient,
 } from "better-auth/client/plugins";
-import type { auth } from "@/src/lib/auth";
-import { createAuthenticatedAgent } from "@/src/lib/bsky";
+import type { auth } from "@/lib/auth";
+import { createAuthenticatedAgent } from "@/lib/bsky";
 
 export const authClient = createAuthClient({
   plugins: [usernameClient(), inferAdditionalFields<typeof auth>()],

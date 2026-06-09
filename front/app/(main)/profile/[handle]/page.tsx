@@ -3,29 +3,26 @@ import { notFound } from "next/navigation";
 import { getProfileByHandle } from "@/lib/bsky/actor";
 import { getUserPosts } from "@/lib/bsky/feed";
 import { getServerAgent } from "@/lib/bsky-server";
-import { requireUserSession } from "@/lib/users";
 
 import { Tabs } from "@/components/ui/tabs";
 import { PostCard } from "@/components/bsky/post-card";
 import { PageHeader } from "@/components/bsky/page-header";
 import { TabsList, TabsContent, TabsTab } from "@/components/ui/tabs";
 
-import { ProfileHeader } from "./_components/profile-header";
+import { ProfileHeader } from "../_components/profile-header";
 
+export default async function ProfilePage({ params }: PageProps<"/profile/[handle]">) {
 
-
-export default async function ProfilePage() {
+  const { handle } = await params;
 
   const agent = await getServerAgent();
-  const user = await requireUserSession();
-  if (!user || !user.handle) {
-    return notFound();
-  }
-  const profile = await getProfileByHandle(agent, user.handle);
+
+  const profile = await getProfileByHandle(agent, handle);
   if (!profile) {
     return notFound();
   }
-  const { feed: userPosts } = await getUserPosts(agent, user.did);
+
+  const { feed: userPosts } = await getUserPosts(agent, profile.did);
 
   return (
     <div>
@@ -35,7 +32,7 @@ export default async function ProfilePage() {
         showBack
       />
 
-      <ProfileHeader isOwnProfile user={profile} />
+      <ProfileHeader user={profile} />
 
       <Tabs defaultValue="posts">
         <TabsList variant="underline" className="size-full border-b border-border">

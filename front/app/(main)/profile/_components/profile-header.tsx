@@ -1,18 +1,15 @@
-"use client"
-
-import { useState } from "react"
 import Link from "next/link"
-import { CalendarDays, MapPin, LinkIcon, MoreHorizontal } from "lucide-react"
+import { CalendarDays, MapPin, LinkIcon } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { cn } from "@/src/lib/utils"
-import { TypographyRegularText, TypographyTinyText } from "@/components/bluesky/typography"
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"
+import { TypographyRegularText, TypographyTinyText } from "@/components/bsky/typography"
 import { ProfileViewDetailed } from "@atproto/api/dist/client/types/app/bsky/actor/defs"
 
 interface ProfileHeaderProps {
@@ -20,8 +17,7 @@ interface ProfileHeaderProps {
   user: ProfileViewDetailed
 }
 
-export function ProfileHeader({ isOwnProfile = true, user }: ProfileHeaderProps) {
-  const [isFollowing, setIsFollowing] = useState(false)
+export function ProfileHeader({ isOwnProfile = false, user }: ProfileHeaderProps) {
 
   return (
     <div>
@@ -34,7 +30,7 @@ export function ProfileHeader({ isOwnProfile = true, user }: ProfileHeaderProps)
       <div className="px-4 pb-4">
         {/* Avatar + actions row */}
         <div className="flex items-end justify-between -mt-12 sm:-mt-16 mb-3">
-          <Avatar className="h-20 w-20 sm:h-28 sm:w-28 border-4 border-card bg-card">
+          <Avatar className="size-20 sm:size-28 border-4 border-card bg-card z-10">
             <AvatarImage
               src={user.avatar ?? "/placeholder.svg?height=112&width=112"}
               alt={user.displayName ?? "Unknown"}
@@ -45,7 +41,7 @@ export function ProfileHeader({ isOwnProfile = true, user }: ProfileHeaderProps)
           </Avatar>
 
           <div className="flex items-center gap-2 pt-14 sm:pt-18">
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
@@ -68,7 +64,7 @@ export function ProfileHeader({ isOwnProfile = true, user }: ProfileHeaderProps)
                   </>
                 )}
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
 
             {isOwnProfile ? (
               <Link href="/account">
@@ -81,15 +77,12 @@ export function ProfileHeader({ isOwnProfile = true, user }: ProfileHeaderProps)
               </Link>
             ) : (
               <Button
-                onClick={() => setIsFollowing(!isFollowing)}
                 className={cn(
                   "rounded-full h-9 px-5 text-sm font-semibold",
-                  isFollowing
-                    ? "bg-transparent border border-border text-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
-                    : "bg-bluesky hover:bg-bluesky/90 text-white"
+                  "bg-bluesky hover:bg-bluesky/90 text-white"
                 )}
               >
-                {isFollowing ? "Following" : "Follow"}
+                Follow
               </Button>
             )}
           </div>

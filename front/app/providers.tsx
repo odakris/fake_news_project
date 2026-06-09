@@ -1,9 +1,9 @@
 "use client";
  
-import { QueryClientProvider } from "@tanstack/react-query";
-import { getQueryClient } from "@/src/lib/query-client";
+import { ThemeProvider } from "next-themes";
+import { getQueryClient } from "@/lib/query-client";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeProvider } from "@/components/theme-provider";
+import { QueryClientProvider } from "@tanstack/react-query";
  
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
