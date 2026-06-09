@@ -18,7 +18,7 @@ export default async function ProfilePage() {
 
   const agent = await getServerAgent();
   const user = await requireUserSession();
-  if (!user || !user.handle) {
+  if (!user || !user.handle || !user.did) {
     return notFound();
   }
   const profile = await getProfileByHandle(agent, user.handle);

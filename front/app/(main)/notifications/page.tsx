@@ -1,6 +1,6 @@
-import { PageHeader } from "@/components/bluesky/page-header"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { PageHeader } from "@/components/bsky/page-header"
 import { Heart, Repeat2, UserPlus, MessageCircle } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const notifications = [
   {

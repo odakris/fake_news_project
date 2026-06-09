@@ -1,6 +1,6 @@
-import { PageHeader } from "@/components/bluesky/page-header"
-import { Search } from "lucide-react"
+import { PageHeader } from "@/components/bsky/page-header"
 import { Input } from "@/components/ui/input"
+import { Search } from "lucide-react"
 
 export default function SearchPage() {
   return (

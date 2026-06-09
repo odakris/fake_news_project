@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
-import { auth } from "./auth"
+import { auth } from "@/lib/auth"
 import { notFound } from "next/navigation";
-import { User } from "@/src/generated/prisma/client";
-import { prisma } from "./prisma";
+import { User } from "@/lib/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
 
 export async function requireUserSession(): Promise<User> {
     const user = await auth.api.getSession({

@@ -1,8 +1,8 @@
-import { PageHeader } from "@/components/bluesky/page-header"
+import { PageHeader } from "@/components/bsky/page-header"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Settings2 } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 
 const conversations = [
   {
