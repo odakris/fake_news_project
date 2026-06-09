@@ -5,10 +5,11 @@ from fastapi import FastAPI
 from transformers import pipeline
 from pydantic import BaseModel
 
-from predict import analyze_emotion, compute_credibility_score, predict_texts_distilbert
+from predict import analyze_emotion, compute_credibility_score, predict_texts_distilbert, get_top_words
 
 class TextRequest(BaseModel):
     text: str
+    top_k: int = 10
 
 app = FastAPI()
 
@@ -34,7 +35,12 @@ def verify(request: TextRequest):
     emotions = analyze_emotion(emotion_classifier, text)
     credibility = compute_credibility_score(distilbert_label, distilbert_score, emotions)
     emotion_dict = {e["label"]: e["score"] for e in emotions}
-    
+    # how much each word's embedding influenced the model's logit for the predicted class. 
+    # Pure classification sensitivity. 
+    # Higher = that word pushed the model harder toward "Fake" (or "Real"). 
+    # No relation to emotion (that's DistilRoBERTa's separate output).
+    top_words = get_top_words(classifier, text, distilbert_label, top_k=request.top_k)
+
     return {
         "text": text,
         "classification": {
@@ -42,5 +48,6 @@ def verify(request: TextRequest):
             "confidence": distilbert_score
         },
         "emotions": emotion_dict,
-        "credibility_score": credibility
+        "credibility_score": credibility,
+        "top_words": top_words
     }
