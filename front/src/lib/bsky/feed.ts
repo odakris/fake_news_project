@@ -1,5 +1,6 @@
 import { Agent } from "@atproto/api";
 
+
 export async function getFeed(agent: Agent, limit: number = 10) {
   const feedData = await agent.app.bsky.feed.getTimeline({
     limit,
@@ -7,7 +8,7 @@ export async function getFeed(agent: Agent, limit: number = 10) {
   if (feedData.success) {
     return feedData.data;
   }
-  return { feed: [], cursor: null };
+  return { feed: [] };
 }
 
 export async function getSuggestedFeeds(agent: Agent) {
@@ -19,10 +20,12 @@ export async function getUserPosts(agent: Agent, did: string, limit: number = 30
   const userPosts = await agent.app.bsky.feed.getAuthorFeed({
     actor: did,
     filter: 'posts_no_replies',
-    limit: limit,
+    limit,
+  }).catch((error) => {
+    return { success: false, data: { feed: [] } };
   });
   if (userPosts.success) {
     return userPosts.data;
   }
-  return { feed: [], cursor: null };
+  return { feed: [] };
 }

@@ -12,9 +12,9 @@ export async function getWhoToFollow(agent: Agent, limit: number = 5) {
   return [];
 }
 
-export async function getProfile(agent: Agent, did: string) {
+export async function getProfileByHandle(agent: Agent, handle: string) {
   const profile = await agent.app.bsky.actor.getProfile({
-    actor: did,
+    actor: handle,
   });
 
   if (profile.success) {

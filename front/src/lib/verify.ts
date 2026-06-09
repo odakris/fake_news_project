@@ -2,6 +2,7 @@ import { createHash } from "crypto";
 import z from "zod";
 import { env } from "./env";
 import { redis } from "./redis";
+import { doWeVerify } from "@/components/bsky/post-classification-badge";
 
 const verifySchema = z.object({
     "text": z.string(),
@@ -41,6 +42,16 @@ async function fetchVerification(text: string): Promise<VerifyResult> {
 }
 
 export async function verifyText(text: string): Promise<VerifyResult> {
+
+    if (!doWeVerify(text)) {
+        return {
+            text: text,
+            classification: { label: "unknown", confidence: 0 },
+            emotions: {},
+            credibility_score: 0
+        };
+    }
+    
     const key = cacheKey(text);
 
     try {

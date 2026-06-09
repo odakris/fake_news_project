@@ -1,28 +1,24 @@
-import React from "react"
-import type { Metadata, Viewport } from "next"
+import type { Metadata, Viewport } from "next";
 
-import "./globals.css"
-import { RightPanel } from "@/app/_components/right-panel"
-import { BlueskySidebar } from "@/app/_components/bluesky-sidebar"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { Providers } from "./providers"
+import "./globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Bluesky",
   description:
     "Bluesky - Social media as it should be. A decentralized social network built on the AT Protocol.",
-}
+};
 
 export const viewport: Viewport = {
   themeColor: "#151d28",
   width: "device-width",
   initialScale: 1,
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" className="light" suppressHydrationWarning>
@@ -32,5 +28,5 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
-  )
+  );
 }

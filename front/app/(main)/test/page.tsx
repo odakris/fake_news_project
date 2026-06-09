@@ -1,7 +1,7 @@
-import { getServerAgent } from "@/src/lib/bsky-server";
-import { getFeed } from "@/src/lib/bsky/feed";
-import { logger } from "@/src/lib/logger";
-import { verifyText } from "@/src/lib/verify";
+import { getServerAgent } from "@/lib/bsky-server";
+import { getFeed } from "@/lib/bsky/feed";
+import { logger } from "@/lib/logger";
+import { verifyText } from "@/lib/verify";
 
 export default async function TestPage() {
 
@@ -12,8 +12,6 @@ export default async function TestPage() {
     const text = firstPost[0].post.record.text as string;
 
     const result = await verifyText(text);
-    
-    logger.info(result);
 
     return (
         <div>

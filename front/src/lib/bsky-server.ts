@@ -1,14 +1,14 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "@/src/lib/auth";
+import { auth } from "@/lib/auth";
 import type { AtpPersistSessionHandler } from "@atproto/api";
 import {
   createAuthenticatedAgent,
   isAtprotoAccessTokenStale,
   refreshAtprotoSession,
   type AtprotoSessionData,
-} from "@/src/lib/bsky";
-import { prisma } from "@/src/lib/prisma";
+} from "@/lib/bsky";
+import { prisma } from "@/lib/prisma";
 
 export async function getServerSession() {
   return auth.api.getSession({ headers: await headers() });
