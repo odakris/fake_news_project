@@ -1,0 +1,23 @@
+# Ignore virtual environment
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore local toolings and IDE files
+.git
+.gitignore
+.dockerignore
+.cursor
+.python-version
+README.md
+
+# Ignore datasets and development directories
+notebooks
+training
+data
+
+# Ignore backup/old model versions
+models/**/old
+models/distilbert/old

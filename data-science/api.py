@@ -12,9 +12,12 @@ class TextRequest(BaseModel):
 
 app = FastAPI()
 
+import torch
+
 # Chargement des modèles au démarrage (une seule fois)
-classifier = pipeline("text-classification", model="./models/distilbert", tokenizer="./models/distilbert")
-emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", top_k=None, device=0, truncation=True)
+device = 0 if torch.cuda.is_available() else -1
+classifier = pipeline("text-classification", model="./models/distilbert", tokenizer="./models/distilbert", device=device)
+emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", top_k=None, device=device, truncation=True)
 
 @app.post("/fakenews/verify")
 def verify(request: TextRequest):
