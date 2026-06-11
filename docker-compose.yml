@@ -59,12 +59,7 @@ services:
       - "8000:8000"
     networks:
       - fakenewsproject-web
-    volumes:
-      - ./data-science:/app
-      - /app/.venv
-    environment:
-      - WATCHFILES_FORCE_POLLING=true
-    command: uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
 
   # Redis
   fakenewsproject-redis:
