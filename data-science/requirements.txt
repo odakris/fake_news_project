@@ -1,0 +1,11 @@
+# Après pip install, exécuter : python -m spacy download en_core_web_sm
+# Et : python -c "import nltk; nltk.download('vader_lexicon')"
+
+fastapi
+uvicorn
+transformers
+torch
+joblib
+pydantic
+scikit-learn
+pandas

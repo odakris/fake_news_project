@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { verifyText } from "@/lib/verify";
+import { verifyText } from "@/lib/bsky/verify";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type PostClassificationBadgeProps = {

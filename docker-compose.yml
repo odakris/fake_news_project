@@ -1,21 +1,16 @@
 services:
   fakenewsproject-db:
     image: postgres:13
-
     environment:
       POSTGRES_DB: fakenewsproject
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-
     ports:
       - "5432:5432"
-
     networks:
       - fakenewsproject-web
-
     volumes:
       - fakenewsproject-db:/var/lib/postgresql/data
-
     healthcheck:
       test: ["CMD", "pg_isready", "--username", "user", "-dbname=fakenewsproject"]
       interval: 10s
@@ -27,9 +22,7 @@ services:
       context: ./front
       dockerfile: Dockerfile
       args:
-        - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
-        - DATABASE_URL=${DATABASE_URL}
-        - NODE_VERSION=24-bookworm-slim
+        - NODE_VERSION=lts-bookworm-slim
     ports:
       - "3000:3000"
     networks:
@@ -59,7 +52,13 @@ services:
       - "8000:8000"
     networks:
       - fakenewsproject-web
-    restart: unless-stopped
+    volumes:
+      - ./data-science/models:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Redis
   fakenewsproject-redis:

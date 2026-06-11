@@ -1,17 +1,18 @@
 import { createHash } from "crypto";
 import z from "zod";
-import { env } from "./env";
-import { redis } from "./redis";
+import { env } from "@/lib/env";
+import { redis } from "@/lib/redis";
 import { doWeVerify } from "@/components/bsky/post-classification-badge";
+import { logger } from "../logger";
 
 const verifySchema = z.object({
-    "text": z.string(),
+    "text": z.string().default(""),
     "classification": z.object({
-        "label": z.string(),
-        "confidence": z.number()
+        "label": z.string().default("unknown"),
+        "confidence": z.number().default(0)
     }),
-    "emotions": z.record(z.string(), z.number()),
-    "credibility_score": z.number()
+    "emotions": z.record(z.string(), z.number()).default({}),
+    "credibility_score": z.number().default(0)
 });
 
 export type VerifyResult = z.infer<typeof verifySchema>;
@@ -31,12 +32,24 @@ async function fetchVerification(text: string): Promise<VerifyResult> {
         body: JSON.stringify({ text })
     });
     if (!response.ok) {
-        throw new Error(`Failed to verify text: ${response.statusText}`);
+        logger.error(`Failed to verify text: ${response.statusText}`);
+        return {
+            text: text,
+            classification: { label: "unknown", confidence: 0 },
+            emotions: {},
+            credibility_score: 0
+        };
     }
     const data = await response.json();
     const result = verifySchema.safeParse(data);
     if (!result.success) {
-        throw new Error(`Invalid response from data science API: ${result.error.message}`);
+        logger.error(`Invalid response from data science API: ${result.error.message}`);
+        return {
+            text: text,
+            classification: { label: "unknown", confidence: 0 },
+            emotions: {},
+            credibility_score: 0
+        };
     }
     return result.data;
 }
