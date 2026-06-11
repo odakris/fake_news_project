@@ -3,6 +3,7 @@ import {
   CredentialSession,
   type AtpPersistSessionHandler,
 } from "@atproto/api";
+import { APIError } from "better-auth";
 
 const BSKY_SERVICE = "https://api.bsky.social";
 export const publicAgent = new Agent({ service: BSKY_SERVICE });
@@ -54,7 +55,10 @@ export async function refreshAtprotoSession(
   options?: CreateAuthenticatedAgentOptions,
 ) {
   if (!session.atprotoRefreshToken) {
-    throw new Error("Missing ATProto refresh token");
+    throw APIError.from("UNAUTHORIZED", {
+      code: "MISSING_ATPROTO_REFRESH_TOKEN",
+      message: "Missing ATProto refresh token",
+    });
   }
 
   const { agent, credentialSession } = createAuthenticatedAgent(

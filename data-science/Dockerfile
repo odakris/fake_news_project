@@ -3,13 +3,7 @@ FROM python:3.12-slim
 # Install uv from the official image
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Set environment variables:
-# - UV_COMPILE_BYTECODE: compiles python files to bytecode for faster container startup
-# - UV_LINK_MODE: avoids filesystem issues with hardlinks inside docker
-# - PYTHONUNBUFFERED: ensures logs are output immediately
-ENV UV_COMPILE_BYTECODE=1 \
-    UV_LINK_MODE=copy \
-    PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
@@ -18,20 +12,12 @@ COPY pyproject.toml uv.lock ./
 
 # Install dependencies using cache mount (extremely fast)
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-install-project --no-dev
+    uv sync --frozen --no-install-project --no-dev --link-mode=copy
 
-# Copy the rest of the application
-COPY . .
+# Copy api files
+COPY api.py api_predict.py ./
 
-# Sync the project itself (includes installation of current folder package if needed)
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
-
-# Download spaCy model and NLTK data using the uv virtualenv
-RUN uv run python -m spacy download en_core_web_sm && \
-    uv run python -c "import nltk; nltk.download('vader_lexicon')"
-
-# Add the virtual environment's binary path to default PATH
+# Path
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Run the API
