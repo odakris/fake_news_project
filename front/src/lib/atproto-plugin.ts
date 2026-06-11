@@ -61,7 +61,11 @@ export function atproto() {
               password: ctx.body.password,
             });
             if (!data.did || !data.accessJwt || !data.refreshJwt) {
-              throw new Error("Invalid ATProto session response");
+              logger.error("Invalid ATProto session response", { data });
+              throw APIError.from("UNAUTHORIZED", {
+                code: "INVALID_ATPROTO_CREDENTIALS",
+                message: "Invalid Bluesky credentials",
+              });
             }
             sessionData = {
               did: data.did,

@@ -1,7 +1,6 @@
 import { getServerAgent } from "@/lib/bsky-server";
 import { getFeed } from "@/lib/bsky/feed";
-import { logger } from "@/lib/logger";
-import { verifyText } from "@/lib/verify";
+import { verifyText } from "@/lib/bsky/verify";
 
 export default async function TestPage() {
 
