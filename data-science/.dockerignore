@@ -1,0 +1,32 @@
+# Python caches / virtualenv
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Git / IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Notebooks & data exploration (not needed at runtime)
+notebooks/
+
+# Archived / old models — runtime only needs models/distilbert
+models/distilbert/old/
+models/distilbert/128_token_trained_distilbert/
+models/distilbert/512_token_trained_distilbert/
+models/emotion
+
+# Datasets (not needed at runtime)
+data/
+
+# Env / secrets
+.env
+.env.*
+
+# Stale pip file — deps come from pyproject.toml + uv.lock
+requirements.txt

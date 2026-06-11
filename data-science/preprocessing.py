@@ -5,8 +5,7 @@
 import spacy
 import re
 import time
-import collections
-import pandas as pd
+
 
 # Load the English model with only the tagger component for lemmatization
 nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])  
