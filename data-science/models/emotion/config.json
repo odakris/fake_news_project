@@ -42,7 +42,7 @@
   "position_embedding_type": "absolute",
   "problem_type": "single_label_classification",
   "tie_word_embeddings": true,
-  "transformers_version": "5.10.2",
+  "transformers_version": "5.5.4",
   "type_vocab_size": 1,
   "use_cache": true,
   "vocab_size": 50265

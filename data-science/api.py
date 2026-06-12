@@ -11,7 +11,7 @@ class TextRequest(BaseModel):
 app = FastAPI()
 
 classifier = pipeline("text-classification", model="./models/distilbert", tokenizer="./models/distilbert")
-emotion_classifier = pipeline("text-classification", model="./models/emotion", top_k=None, device=-1, truncation=True)
+emotion_classifier = pipeline("text-classification", model="./models/emotion", tokenizer="./models/emotion", top_k=None, device=-1, truncation=True)
 
 @app.post("/fakenews/verify")
 def verify(body: TextRequest):
