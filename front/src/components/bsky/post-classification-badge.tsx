@@ -1,11 +1,9 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge, BadgeProps } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { verifyText } from "@/lib/bsky/verify";
+import type { VerifyResult } from "@/lib/bsky/verify";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-type PostClassificationBadgeProps = {
-  text: string
-}
+type PostClassificationBadgeProps = Pick<VerifyResult, "classification" | "emotions">
 
 const EMOTION_COLORS: Record<string, string> = {
   anger: "#ef4444",
@@ -15,6 +13,13 @@ const EMOTION_COLORS: Record<string, string> = {
   neutral: "#94a3b8",
   sadness: "#3b82f6",
   surprise: "#f97316",
+}
+
+const CLASSIFICATION_COLORS: Record<VerifyResult["classification"]["label"], BadgeProps["variant"]> = {
+  Fake: "destructive",
+  Real: "success",
+  Uncertain: "warning",
+  Unknown: "outline",
 }
 
 function formatConfidence(confidence: number) {
@@ -62,19 +67,14 @@ export function doWeVerify(text: string): boolean {
   return text.length > 100 || text.split(" ").length > 10;
 }
 
-export async function PostClassificationBadge({ text }: PostClassificationBadgeProps) {
-  const { classification, emotions, credibility_score } = await verifyText(text)
-  const isFake = classification.label.toLowerCase() === "fake"
-
+export function PostClassificationBadge({ classification, emotions }: PostClassificationBadgeProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <Badge
-          variant={isFake ? "destructive" : "secondary"}
-          className={cn(
-            "mt-2",
-            !isFake && "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
-          )}
+          variant={CLASSIFICATION_COLORS[classification.label]}
+          className="mt-2"
+          size="sm"
         >
           {classification.label} · {formatConfidence(classification.confidence)}
         </Badge>

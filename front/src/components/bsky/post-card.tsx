@@ -12,6 +12,7 @@ import {
   PostClassificationBadge,
   PostClassificationBadgeSkeleton,
 } from "@/components/bsky/post-classification-badge";
+import { VerifyResult, verifyText } from "@/lib/bsky/verify";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // import { Button } from "@/components/ui/button";
 // import {
@@ -23,12 +24,78 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { TypographyRegularText, TypographySemiBoldText, TypographyTinyText } from "@/components/bsky/typography";
 import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { logger } from "@/lib/logger";
+import { ShareButton } from "./share-button";
 
 type PostCardProps = {
   post: FeedViewPost
 }
 
-export function PostCard({ post }: PostCardProps) {
+function normalizeWord(word: string) {
+  return word.toLowerCase().replace(/^[^\w]+|[^\w]+$/g, "");
+}
+
+function formatTextWithTopWords(text: string, topWords: { word: string, score: number }[]) {
+  const topWordSet = new Set(
+    topWords.map(({ word }) => normalizeWord(word)).filter(Boolean)
+  );
+
+  return text.split(/(\s+)/).map((part, index) => {
+    if (/^\s+$/.test(part)) {
+      return part;
+    }
+
+    const normalized = normalizeWord(part);
+    if (normalized && topWordSet.has(normalized)) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span key={index} className="underline decoration">
+              {part}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            {topWords.find(({ word }) => normalizeWord(word) === normalized)?.score.toFixed(2)} %
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return part;
+  });
+}
+
+function PostCardVerifiedContent({ text, classification, emotions, top_words }: { text: string, classification: VerifyResult["classification"], emotions: VerifyResult["emotions"], top_words: VerifyResult["top_words"] }) {
+
+  logger.info(`Top words: ${top_words}`);
+  logger.info(`Classification: ${classification}`);
+  logger.info(`Emotions: ${emotions}`);
+
+  return (
+    <>
+      <TypographyRegularText className="leading-relaxed whitespace-pre-wrap wrap-break-word">
+        {formatTextWithTopWords(text, top_words)}
+      </TypographyRegularText>
+      <PostClassificationBadge classification={classification} emotions={emotions} />
+    </>
+  );
+}
+
+function PostCardVerifiedContentSkeleton({ text }: { text: string }) {
+  return (
+    <>
+      <TypographyRegularText className="leading-relaxed whitespace-pre-wrap wrap-break-word">
+        {text}
+      </TypographyRegularText>
+      <PostClassificationBadgeSkeleton />
+    </>
+  );
+}
+
+export async function PostCard({ post }: PostCardProps) {
+  const text = post.post.record.text as string;
+  const { classification, emotions, top_words } = await verifyText(text, 5);
 
   return (
     <article className="flex gap-3 px-4 py-2 border-b border-border hover:bg-accent/30 transition-colors">
@@ -77,16 +144,15 @@ export function PostCard({ post }: PostCardProps) {
         </div>
 
         {/* Content */}
-        <TypographyRegularText className="leading-relaxed whitespace-pre-wrap wrap-break-word">
-          {post.post.record.text as string}
-        </TypographyRegularText>
-        {
-          doWeVerify(post.post.record.text as string) && (
-            <Suspense fallback={<PostClassificationBadgeSkeleton />}>
-              <PostClassificationBadge text={post.post.record.text as string} />
-            </Suspense>
-          )
-        }
+        {doWeVerify(text) ? (
+          <Suspense fallback={<PostCardVerifiedContentSkeleton text={text} />}>
+            <PostCardVerifiedContent text={text} classification={classification} emotions={emotions} top_words={top_words} />
+          </Suspense>
+        ) : (
+          <TypographyRegularText className="leading-relaxed whitespace-pre-wrap wrap-break-word">
+            {text}
+          </TypographyRegularText>
+        )}
 
         {/* Optional image */}
         {/* {post.post.record && (
@@ -119,7 +185,7 @@ export function PostCard({ post }: PostCardProps) {
               //   : "text-muted-foreground hover:text-emerald-600"
             )}
             aria-label={`${post.post.record.repostCount} reposts`}
-            // aria-pressed={isReposted}
+          // aria-pressed={isReposted}
           >
             <Repeat2 className="h-[18px] w-[18px]" />
             <span className="text-xs font-medium">{post.post.repostCount}</span>
@@ -134,22 +200,16 @@ export function PostCard({ post }: PostCardProps) {
               //   : "text-muted-foreground hover:text-rose-500 "
             )}
             aria-label={`${post.post.likeCount} likes`}
-            // aria-pressed={isLiked}
+          // aria-pressed={isLiked}
           >
             <Heart
               className="h-[18px] w-[18px]"
-              // fill={isLiked ? "currentColor" : "none"}
+            // fill={isLiked ? "currentColor" : "none"}
             />
             <span className="text-xs font-medium">{post.post.likeCount}</span>
           </button>
 
-          <button
-            type="button"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-muted-foreground hover:text-gray-300 transition-colors"
-            aria-label="Share post"
-          >
-            <Share className="h-[18px] w-[18px]" />
-          </button>
+          <ShareButton url={post.post.uri} fake={classification.label === "Fake"} />
         </div>
       </div>
     </article>
