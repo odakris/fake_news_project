@@ -15,11 +15,8 @@ __pycache__/
 # Notebooks & data exploration (not needed at runtime)
 notebooks/
 training/
-
-# Archived / old models — runtime only needs models/distilbert
-models/distilbert/old/
-models/distilbert/128_token_trained_distilbert/
-models/distilbert/512_token_trained_distilbert/
+# ...except preprocessing.py: the API imports clean_text from it at runtime.
+!training/preprocessing.py
 
 # Datasets (not needed at runtime)
 data/

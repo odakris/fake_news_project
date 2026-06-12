@@ -1,4 +1,8 @@
-from preprocessing import clean_text, nlp, lemmatize
+# ============================================================
+#  baseline_predict.py — Baseline (TF-IDF) prediction + sentiment helpers
+# ============================================================
+
+from training.preprocessing import clean_text, nlp, lemmatize
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 def predict_text_baseline(model: object, vectorizer: object, text: str):

@@ -19,6 +19,3 @@ data/
 # Au cas ou
 node_modules/
 .env
-
-./data_science/models/distilbert/128_token_trained_distilbert
-./data_science/models/distilbert/512_token_trained_distilbert

@@ -4,9 +4,11 @@
 import joblib
 import nltk
 
-import pandas as pd
-
-from predict import analyze_sentiment, compute_credibility_score, predict_text_baseline, predict_texts_distilbert, analyze_emotion
+# Runtime inference helpers (shared with the API) live in the root predict.py;
+# baseline TF-IDF + sentiment helpers live in training/baseline_predict.py.
+# Run this script as a module from data-science/:  python -m training.main
+from predict import predict_texts_distilbert, analyze_emotion, compute_credibility_score
+from training.baseline_predict import predict_text_baseline, analyze_sentiment
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from transformers import pipeline
 
