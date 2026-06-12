@@ -25,6 +25,10 @@ def clean_text(text):
     # Normalize spaces and other
     text = text.replace("\u00A0", " ")  # non-breaking space (5,251)
     text = text.replace("\u2026", "...")  # … → ... (74)
+    # Normalize exclamation marks: ISOT "fake" texts use "!" ~8x more than "real",
+    # so the model learned "!" = fake and a single "!" flips a neutral fact.
+    # Collapse any run of "!" to a single "." so punctuation can't drive veracity.
+    text = re.sub(r'!+', '.', text)
     # Remove source signatures at the start: "WASHINGTON (Reuters) -"
     text = re.sub(r'^[A-Z\s/,]+ \([A-Za-z\s]+\)\s*[-–—]\s*', '', text)
     # Remove photo attributions
