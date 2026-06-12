@@ -35,7 +35,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # spaCy model + NLTK data both install inside the venv (preserved by the
 # /app/.venv volume in compose, and copied wholesale in the runtime stage).
 RUN uv run python -m spacy download en_core_web_sm && \
-    uv run python -c "import nltk; nltk.download('vader_lexicon', download_dir='/app/.venv/nltk_data'); nltk.download('stopwords', download_dir='/app/.venv/nltk_data')"
+    uv run python -c "import nltk; nltk.download('vader_lexicon', download_dir='/app/.venv/nltk_data')"
 
 # ============================================================
 #  Runtime stage — clean image, only what the API needs.
