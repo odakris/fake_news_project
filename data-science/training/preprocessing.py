@@ -14,17 +14,21 @@ def clean_text(text):
     """Cleans the input text by removing URLs, mentions, and irrelevant patterns."""
     # Normalize curly/smart quotes to standard apostrophes
     # Normalize apostrophes
-    text = text.replace("\u2019", "'")  # ' → ' (70,279 occurrences — main issue)
-    text = text.replace("\u2018", "'")  # ' → ' (1,183 occurrences)
+    text = text.replace("\u2019", "'")  # ' -> ' (70,279 occurrences — main issue)
+    text = text.replace("\u2018", "'")  # ' -> ' (1,183 occurrences)
     # Normalize double quotes
-    text = text.replace("\u201C", '"')  # " → " (53,766)
-    text = text.replace("\u201D", '"')  # " → " (53,489)
+    text = text.replace("\u201C", '"')  # " -> " (53,766)
+    text = text.replace("\u201D", '"')  # " -> " (53,489)
     # Normalize dashes
-    text = text.replace("\u2013", "-")  # – → - (714)
-    text = text.replace("\u2014", "-")  # — → - (500)
+    text = text.replace("\u2013", "-")  # – -> - (714)
+    text = text.replace("\u2014", "-")  # — -> - (500)
     # Normalize spaces and other
     text = text.replace("\u00A0", " ")  # non-breaking space (5,251)
-    text = text.replace("\u2026", "...")  # … → ... (74)
+    text = text.replace("\u2026", "...")  # … -> ... (74)
+    # Normalize exclamation marks: ISOT "fake" texts use "!" ~8x more than "real",
+    # so the model learned "!" = fake and a single "!" flips a neutral fact.
+    # Collapse any run of "!" to a single "." so punctuation can't drive veracity.
+    text = re.sub(r'!+', '.', text)
     # Remove source signatures at the start: "WASHINGTON (Reuters) -"
     text = re.sub(r'^[A-Z\s/,]+ \([A-Za-z\s]+\)\s*[-–—]\s*', '', text)
     # Remove photo attributions
