@@ -2,8 +2,8 @@
 #  predict.py — Prediction on new texts
 # ============================================================
 
-# from torch import enable_grad
 from transformers import pipeline
+from torch import no_grad, enable_grad, full_like
 
 
 def predict_texts_distilbert(classifier: pipeline, text: str):
@@ -41,10 +41,15 @@ def analyze_emotion(emotion_classifier, text):
 def compute_credibility_score(distilbert_label, distilbert_score, emotions):
     """Calcule un score de crédibilité entre 0 et 1.
 
-    - distilbert_label: "Fake" or "Real"
+    - distilbert_label: "Fake", "Real" or "Uncertain"
     - distilbert_score: confiance du modèle (0 à 1)
     - emotions: listes des émotions [{'label': 'anger', 'score': 0.45}, ...]
     """
+
+    # "Uncertain" : le texte ne porte pas assez de signal (trop court ou
+    # prédiction trop hésitante) -> score neutre, ni crédible ni suspect.
+    if distilbert_label == "Uncertain":
+        return 0.5
 
     # Score de base : Probabilité "REAL"
     if distilbert_label == "Real":
@@ -59,85 +64,83 @@ def compute_credibility_score(distilbert_label, distilbert_score, emotions):
     disgust = emotion_dict.get("disgust", 0)
 
     # Pénalité émotionnelle (moyenne)
-    #penatlty = (suprise + anger + disgust) / 3
-    penatlty = 0
+    penatlty = (suprise + anger + disgust) / 3
 
     # Score final
-    credibility_score = base_score * (1 - penatlty)
+    credibility_score = base_score #* (1 - penatlty)
 
     return round(credibility_score, 3)
+
 
 # how much each word's embedding influenced the model's logit for the predicted class. 
 # Pure classification sensitivity. 
 # Higher = that word pushed the model harder toward "Fake" (or "Real"). 
 # No relation to emotion (that's DistilRoBERTa's separate output).
-# def get_top_words(classifier_pipeline, text: str, label: str, top_k: int = 10):
-#     """Get top words driving the classification using gradient-based attribution.
+def get_top_words(classifier_pipeline, text: str, label: str, top_k: int = 10):
+    """Get top words driving the classification using gradient attribution (PAD baseline).
 
-#     Computes L2 norm of input-embedding gradients w.r.t. the predicted class logit.
-#     Higher score = token pushed the model harder toward the predicted label.
+    Computes grad * (input - PAD_baseline), L2 norm per token.
+    PAD baseline removes token-frequency bias from zero-vector baseline.
+    Higher score = token pushed model harder toward the predicted label.
 
-#     Args:
-#         classifier_pipeline: Hugging Face pipeline (text-classification)
-#         text: raw input text
-#         label: predicted label ("Fake" or "Real")
-#         top_k: number of top words to return
+    Args:
+        classifier_pipeline: Hugging Face pipeline (text-classification)
+        text: raw input text
+        label: predicted label ("Fake" or "Real")
+        top_k: number of top words to return
 
-#     Returns:
-#         list of dicts: [{"word": str, "score": float}] sorted by importance desc
-#     """
-#     model = classifier_pipeline.model
-#     tokenizer = classifier_pipeline.tokenizer
+    Returns:
+        list of dicts: [{"word": str, "score": float}] sorted by importance desc
+    """
+    model = classifier_pipeline.model
+    tokenizer = classifier_pipeline.tokenizer
+    target_idx = model.config.label2id.get(label, 0)
 
-#     target_idx = model.config.label2id.get(label, 0)
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
+    tokens = tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
 
-#     inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
-#     tokens = tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
+    model.eval()
 
-#     model.eval()
+    with no_grad():
+        actual = model.distilbert.embeddings(inputs["input_ids"]).detach()
+        pad_ids = full_like(inputs["input_ids"], tokenizer.pad_token_id)
+        baseline = model.distilbert.embeddings(pad_ids).detach()
 
-#     with enable_grad():
-#         embedding_output = model.distilbert.embeddings(inputs["input_ids"])
-#         embedding_output.retain_grad()
+    with enable_grad():
+        interp = actual.requires_grad_(True)
+        model.zero_grad()
+        model(inputs_embeds=interp, attention_mask=inputs.get("attention_mask")).logits[0, target_idx].backward()
 
-#         outputs = model(
-#             inputs_embeds=embedding_output,
-#             attention_mask=inputs.get("attention_mask"),
-#         )
-#         model.zero_grad()
-#         outputs.logits[0, target_idx].backward()
+    # grad * (input - baseline), L2 norm per token
+    attr_norms = (interp.grad * (actual - baseline))[0].norm(dim=-1)
 
-#     grad_norms = embedding_output.grad[0].norm(dim=-1)  # [seq_len]
+    # Merge WordPiece subwords (## prefix) back to full words; skip [CLS] and [SEP]
+    words, scores = [], []
+    current_word, current_score = "", 0.0
 
-#     # Merge WordPiece subwords (## prefix) back to full words; skip [CLS] and [SEP]
-#     words, scores = [], []
-#     current_word, current_score = "", 0.0
+    for token, score in zip(tokens[1:-1], attr_norms[1:-1].tolist()):
+        if token.startswith("##"):
+            current_word += token[2:]
+            current_score = max(current_score, score)
+        else:
+            if current_word:
+                words.append(current_word)
+                scores.append(current_score)
+            current_word, current_score = token, score
 
-#     for token, score in zip(tokens[1:-1], grad_norms[1:-1].tolist()):
-#         if token.startswith("##"):
-#             current_word += token[2:]
-#             current_score = max(current_score, score)
-#         else:
-#             if current_word:
-#                 words.append(current_word)
-#                 scores.append(current_score)
-#             current_word = token
-#             current_score = score
+    if current_word:
+        words.append(current_word)
+        scores.append(current_score)
 
-#     if current_word:
-#         words.append(current_word)
-#         scores.append(current_score)
+    if not scores:
+        return []
 
-#     if not scores:
-#         return []
-
-#     max_score = max(scores)
-#     normalized = [round(s / max_score, 4) for s in scores]
-
-#     # Drop punctuation-only tokens — no alpha char = not useful for highlighting
-#     word_scores = [
-#         (w, s) for w, s in sorted(zip(words, normalized), key=lambda x: x[1], reverse=True)
-#         if any(c.isalpha() for c in w)
-#     ]
-#     return [{"word": w, "score": s} for w, s in word_scores[:top_k]]
+    max_score = max(scores)
+    ranked = sorted(zip(words, scores), key=lambda x: x[1], reverse=True)
+    # Display filter: drop pure-punctuation tokens (".", ":", ",", "-"...). Gradient
+    # attribution scores them highly because sentence-boundary tokens aggregate
+    # context, but they carry no meaning for the user — removing them does NOT
+    # change the prediction (verified), it only cleans up the shown words.
+    ranked = [(w, s) for w, s in ranked if any(c.isalnum() for c in w)]
+    return [{"word": w, "score": round(s / max_score, 4)} for w, s in ranked[:top_k]]
 
