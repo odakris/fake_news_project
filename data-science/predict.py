@@ -5,10 +5,7 @@
 from torch import no_grad, enable_grad, full_like
 from preprocessing import clean_text, nlp, lemmatize
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-from nltk.corpus import stopwords
 from transformers import pipeline
-
-_STOPWORDS = set(stopwords.words('english'))
 
 def predict_text_baseline(model: object, vectorizer: object, text: str):
     """Make a prediction on a given text.
@@ -148,21 +145,21 @@ def get_top_words(classifier_pipeline, text: str, label: str, top_k: int = 10):
 
     max_score = max(scores)
     ranked = sorted(zip(words, scores), key=lambda x: x[1], reverse=True)
-    # drop stopwords; drop pure structural punctuation (,.:;) but keep ! and ? (meaningful signals)
-    ranked = [
-        (w, s) for w, s in ranked
-        if w not in _STOPWORDS and (any(c.isalnum() for c in w) or w in {"!", "?"})
-    ]
     return [{"word": w, "score": round(s / max_score, 4)} for w, s in ranked[:top_k]]
 
 
 def compute_credibility_score(distilbert_label, distilbert_score, emotions):
     """Calcule un score de crédibilité entre 0 et 1.
 
-    - distilbert_label: "Fake" or "Real"
+    - distilbert_label: "Fake", "Real" or "Uncertain"
     - distilbert_score: confiance du modèle (0 à 1)
     - emotions: listes des émotions [{'label': 'anger', 'score': 0.45}, ...]
     """
+
+    # "Uncertain" : le texte ne porte pas assez de signal (trop court ou
+    # prédiction trop hésitante) -> score neutre, ni crédible ni suspect.
+    if distilbert_label == "Uncertain":
+        return 0.5
 
     # Score de base : Probabilité "REAL"
     if distilbert_label == "Real":
