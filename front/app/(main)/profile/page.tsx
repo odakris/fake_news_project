@@ -6,7 +6,7 @@ import { getServerAgent } from "@/lib/bsky-server";
 import { requireUserSession } from "@/lib/users";
 
 import { Tabs } from "@/components/ui/tabs";
-import { PostCard } from "@/components/bsky/post-card";
+import { PostCard } from "@/components/bsky/post-card/post-card";
 import { PageHeader } from "@/components/bsky/page-header";
 import { TabsList, TabsContent, TabsTab } from "@/components/ui/tabs";
 

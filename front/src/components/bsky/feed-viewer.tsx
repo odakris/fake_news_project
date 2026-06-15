@@ -1,6 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { PostCard } from "@/components/bsky/post-card";
+import { PostCard } from "@/components/bsky/post-card/post-card";
 import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 
 type FeedViewerProps = {
@@ -10,7 +10,7 @@ type FeedViewerProps = {
 export function FeedViewer({ feedPosts }: FeedViewerProps) {
   return (
     <ScrollArea className="h-full">
-      <TooltipProvider delayDuration={0}>
+      <TooltipProvider delay={0}>
         {feedPosts.map((post) => (
           <PostCard key={post.post.cid} post={post} />
         ))}

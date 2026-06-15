@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import z from "zod";
 import { env } from "@/lib/env";
 import { redis } from "@/lib/redis";
-import { doWeVerify } from "@/components/bsky/post-classification-badge";
+import { doWeVerify } from "@/components/bsky/post-card/post-classification-badge";
 import { logger } from "../logger";
 
 const verifySchema = z.object({
