@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Frame, FrameHeader, FrameTitle, FramePanel } from "@/components/ui/frame";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
+import FakeMessageTesterModal from "@/components/bsky/fake-message/fake-message-tester-modal";
 
 const trendingTopics = [
   { tag: "ATProtocol", posts: "2.4k posts" },
@@ -29,6 +30,8 @@ export async function RightPanel({ className }: PropsWithClassName) {
       <ScrollArea className="h-full">
         <div className="p-4 flex flex-col gap-5">
           <SearchButton />
+
+          <FakeMessageTesterModal />
 
           <Frame>
             <FrameHeader>

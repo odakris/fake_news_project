@@ -31,8 +31,6 @@ import FakeMessageTesterModal from "@/components/bsky/fake-message/fake-message-
               ))}
             </FramePanel>
           </Frame>
-          
-          <FakeMessageTesterModal />
         </ScrollArea>
       </div>
     )

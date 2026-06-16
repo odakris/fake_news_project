@@ -29,6 +29,7 @@ import FakeMessageTesterInput from "@/components/bsky/fake-message/fake-message-
 import { useMutation } from "@tanstack/react-query";
 import type { VerifyResult } from "@/lib/bsky/verify";
 import { PostCardVerifiedContent } from "@/components/bsky/post-card/post-card-verification-content";
+import { useHotkeys } from "react-hotkeys-hook";
 
 export default function FakeMessageTesterModal() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -54,6 +55,11 @@ export default function FakeMessageTesterModal() {
     },
   });
 
+  useHotkeys("mod+l", (e) => {
+    e.preventDefault();
+    setDialogOpen(true);
+  });
+
   return (
     <Dialog
       onOpenChange={(o) => {
@@ -72,7 +78,7 @@ export default function FakeMessageTesterModal() {
         <Search />
         Text Veracity Tester
         <KbdGroup>
-          <Kbd>⌘K</Kbd>
+          <Kbd>⌘L</Kbd>
         </KbdGroup>
 
       </DialogTrigger>
