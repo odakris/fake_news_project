@@ -5,7 +5,6 @@ import { cn, PropsWithClassName } from "@/lib/utils";
 
 import { Frame, FramePanel } from "@/components/ui/frame";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import FakeMessageTesterModal from "@/components/bsky/fake-message/fake-message-tester-modal";
 
   const navItems = [
     { href: "/", label: "Home", icon: Home },
@@ -19,7 +18,7 @@ import FakeMessageTesterModal from "@/components/bsky/fake-message/fake-message-
   export async function LeftPanel({ className }: PropsWithClassName) {
 
     return (
-      <div className={cn("hidden xl:flex shrink-0 sticky top-0 overflow-y-auto flex-col h-screen gap-4", className)} >
+      <div className={cn("hidden xl:flex shrink-0 sticky top-0 overflow-y-auto flex-col h-screen gap-4 p-4", className)} >
         <ScrollArea className={"gap-4"}>
           <Frame>
             <FramePanel>

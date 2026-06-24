@@ -21,7 +21,7 @@ export function PageHeader({
       <div className="flex items-center gap-3 px-4 h-14">
         {showBack && <GoBackButton />}
         <div className="flex-1 min-w-0">
-          <h1 className="text-lg font-bold text-foreground truncate">
+          <h1 className="text-2xl font-bold text-foreground truncate">
             {title}
           </h1>
           {subtitle && (

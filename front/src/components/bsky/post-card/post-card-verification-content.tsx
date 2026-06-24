@@ -8,6 +8,7 @@ type PostCardVerifiedContentProps = {
     classification: VerifyResult["classification"];
     emotions: VerifyResult["emotions"];
     top_words: VerifyResult["top_words"];
+    credibility_score: VerifyResult["credibility_score"];
 }
 
 function normalizeWord(word: string) {
@@ -42,14 +43,14 @@ function formatTextWithTopWords(text: string, topWords: { word: string, score: n
     });
 }
 
-export function PostCardVerifiedContent({ text, classification, emotions, top_words }: PostCardVerifiedContentProps) {
+export function PostCardVerifiedContent({ text, classification, emotions, top_words, credibility_score }: PostCardVerifiedContentProps) {
 
     return (
         <>
             <TypographyRegularText className="leading-relaxed whitespace-pre-wrap wrap-break-word">
                 {formatTextWithTopWords(text, top_words)}
             </TypographyRegularText>
-            <PostClassificationBadge classification={classification} emotions={emotions} />
+            <PostClassificationBadge classification={classification} emotions={emotions} credibility_score={credibility_score} />
         </>
     );
 }

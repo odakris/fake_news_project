@@ -2,7 +2,7 @@ import { Badge, BadgeProps } from "@/components/ui/badge";
 import type { VerifyResult } from "@/lib/bsky/verify";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-type PostClassificationBadgeProps = Pick<VerifyResult, "classification" | "emotions">
+type PostClassificationBadgeProps = Pick<VerifyResult, "classification" | "emotions" | "credibility_score">
 
 const EMOTION_COLORS: Record<string, string> = {
   anger: "#ef4444",
@@ -66,7 +66,7 @@ export function doWeVerify(text: string): boolean {
   return text.length > 100 || text.split(" ").length > 10;
 }
 
-export function PostClassificationBadge({ classification, emotions }: PostClassificationBadgeProps) {
+export function PostClassificationBadge({ classification, emotions, credibility_score }: PostClassificationBadgeProps) {
   return (
     <Tooltip>
       <TooltipTrigger render={
@@ -76,7 +76,7 @@ export function PostClassificationBadge({ classification, emotions }: PostClassi
           size="sm"
         />
       }>
-        {classification.label} · {formatConfidence(classification.confidence)}
+        {classification.label} · {formatConfidence(credibility_score)}
 
       </TooltipTrigger>
       <TooltipContent className="py-3">

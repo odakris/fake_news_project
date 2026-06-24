@@ -34,7 +34,7 @@ function PostCardVerifiedContentSkeleton({ text }: { text: string }) {
 
 export async function PostCard({ post }: PostCardProps) {
   const text = post.post.record.text as string;
-  const { classification, emotions, top_words } = await verifyText(text, 5);
+  const { classification, emotions, top_words, credibility_score } = await verifyText(text, 5);
 
   return (
     <article className="flex gap-3 px-4 py-2 border-b border-border hover:bg-accent/30 transition-colors">
@@ -65,7 +65,7 @@ export async function PostCard({ post }: PostCardProps) {
         {/* Content */}
         {doWeVerify(text) ? (
           <Suspense fallback={<PostCardVerifiedContentSkeleton text={text} />}>
-            <PostCardVerifiedContent text={text} classification={classification} emotions={emotions} top_words={top_words} />
+            <PostCardVerifiedContent text={text} classification={classification} emotions={emotions} top_words={top_words} credibility_score={credibility_score} />
           </Suspense>
         ) : (
           <TypographyRegularText className="leading-relaxed whitespace-pre-wrap wrap-break-word">
