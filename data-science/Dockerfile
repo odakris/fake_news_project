@@ -29,6 +29,20 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 # App code + install the project itself
 COPY . .
+
+# Guard: fail fast if model weights are still Git LFS pointer files.
+# Without `git lfs pull` on the host, *.safetensors are ~134-byte text stubs
+# ("version https://git-lfs.github.com/spec/v1"), which crash at runtime with
+# the cryptic "SafetensorError: header too large". Catch it here with a clear fix.
+RUN set -e; \
+    for f in $(find models -name '*.safetensors'); do \
+        if head -c 64 "$f" | grep -q 'git-lfs.github.com'; then \
+            echo "ERROR: '$f' is a Git LFS pointer, not the real model weights." >&2; \
+            echo "Run 'git lfs install && git lfs pull' on the host, then rebuild." >&2; \
+            exit 1; \
+        fi; \
+    done
+
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
