@@ -6,7 +6,7 @@ Un client web inspiré de Bluesky qui analyse en temps réel les publications po
 
 Le projet est composé de trois services orchestrés via Docker Compose, plus une base de données et un cache.
 
-```
+```md
 ┌────────────────────┐      ┌────────────────────────┐      ┌─────────────────────┐
 │  front (Next.js)   │ ───► │ data-science (FastAPI) │ ───► │  Modèles ML          │
 │  Client Bluesky    │ POST │  /fakenews/verify      │      │  DistilBERT +        │
@@ -18,7 +18,7 @@ Le projet est composé de trois services orchestrés via Docker Compose, plus un
 ```
 
 | Service | Dossier | Stack | Port |
-|---------|---------|-------|------|
+| --------- | --------- | ------- | ------ |
 | Front-end | [`front/`](./front) | Next.js 16, React 19, Better Auth, AT Protocol, Prisma, Tailwind/Radix | `3000` |
 | Data science | [`data-science/`](./data-science) | FastAPI, Transformers, PyTorch, spaCy/NLTK | `8000` |
 | Base de données | — | PostgreSQL 13 | `5432` |
@@ -34,8 +34,8 @@ docker compose up --build
 
 Une fois les services démarrés :
 
-- Application web : http://localhost:3000
-- API data-science (docs) : http://localhost:8000/docs
+- Application web : <http://localhost:3000>
+- API data-science (docs) : <http://localhost:8000/docs>
 
 ## Le pipeline de détection
 
@@ -55,7 +55,7 @@ await verify({ search: "anything you want to verify", top_k: 5 });
 ```
 
 | Method | Route | Body / Query |
-|--------|--------|---------------|
+| -------- | -------- | --------------- |
 | GET | `/api/verify` | `{ search: string, top_k?: int }` |
 
 ```json
@@ -81,7 +81,7 @@ pnpm dev          # http://localhost:3000
 Variables d'environnement principales (voir `front/src/lib/env.ts`) :
 
 | Variable | Description | Défaut (dev) |
-|----------|-------------|--------------|
+| ---------- | ------------- | -------------- |
 | `DATABASE_URL` | Connexion PostgreSQL | `postgresql://user:password@localhost:5432/fakenewsproject` |
 | `BETTER_AUTH_SECRET` | Secret Better Auth (≥ 32 caractères) | `dev-only-change-me-...` |
 | `BETTER_AUTH_URL` | URL publique de l'app | `http://localhost:3001` |
@@ -101,7 +101,7 @@ uv run uvicorn api:app --reload --port 8000
 
 ## Structure du projet
 
-```
+```md
 fake_news_project/
 ├── docker-compose.yml          # Orchestration des 4 services
 ├── front/                      # Application web Next.js (client Bluesky)
